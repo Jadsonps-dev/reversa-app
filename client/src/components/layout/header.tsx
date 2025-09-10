@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Package, PlusCircle, List } from "lucide-react";
+import { Package, PlusCircle, List, BarChart3 } from "lucide-react";
 
 export function Header() {
   const [location] = useLocation();
@@ -37,6 +37,19 @@ export function Header() {
               >
                 <List className="inline mr-2" size={16} />
                 Finalização
+              </button>
+            </Link>
+            <Link href="/reports">
+              <button 
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  location === "/reports" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-secondary text-secondary-foreground hover:bg-accent"
+                }`}
+                data-testid="button-reports-tab"
+              >
+                <BarChart3 className="inline mr-2" size={16} />
+                Relatórios
               </button>
             </Link>
           </nav>
