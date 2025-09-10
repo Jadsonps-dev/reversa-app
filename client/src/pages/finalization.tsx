@@ -83,7 +83,11 @@ export default function Finalization() {
     return trackings.filter((tracking) => {
       const matchesStatus = statusFilter === "ALL" || (tracking.status || "PENDENTE") === statusFilter;
       const matchesSearch = !searchFilter || tracking.trackingCode.toLowerCase().includes(searchFilter.toLowerCase());
-      const matchesDate = !dateFilter || new Date(tracking.receivedAt).toISOString().split('T')[0] === dateFilter;
+      const matchesDate = !dateFilter || (() => {
+        const date = new Date(tracking.receivedAt);
+        const localYMD = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+        return localYMD === dateFilter;
+      })();
       return matchesStatus && matchesSearch && matchesDate;
     });
   }, [trackings, statusFilter, searchFilter, dateFilter]);
