@@ -242,8 +242,14 @@ export default function Finalization() {
                 <TableCell>
                   <Input
                     type="number"
-                    value={getFieldValue(tracking, "quantity") || ""}
-                    onChange={(e) => handleFieldChange(tracking.id, "quantity", parseInt(e.target.value) || null)}
+                    min={0}
+                    step={1}
+                    value={getFieldValue(tracking, "quantity") ?? ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
+                      handleFieldChange(tracking.id, "quantity", numValue);
+                    }}
                     className="w-20"
                     placeholder="0"
                     data-testid={`input-quantity-${tracking.id}`}
