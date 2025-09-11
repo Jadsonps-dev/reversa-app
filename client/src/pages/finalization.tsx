@@ -2,13 +2,14 @@ import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RefreshCw, Save, Trash2 } from "lucide-react";
-import type { Tracking, UpdateTracking } from "@shared/schema";
+import { Badge } from "@/components/ui/badge";
+import { RefreshCw, Save, Trash2, Users, Plus, Edit3, Check } from "lucide-react";
+import type { Tracking, UpdateTracking, User, InsertUser } from "@shared/schema";
 
 const statusOptions = [
   { value: "PENDENTE", label: "Pendente" },
@@ -33,9 +34,15 @@ export default function Finalization() {
   const [searchFilter, setSearchFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [editingValues, setEditingValues] = useState<Record<string, Partial<UpdateTracking>>>({});
+  const [newUserName, setNewUserName] = useState("");
+  const [showUserForm, setShowUserForm] = useState(false);
 
   const { data: trackings = [], isLoading, refetch } = useQuery<Tracking[]>({
     queryKey: ["/api/trackings"],
+  });
+
+  const { data: users = [], isLoading: usersLoading } = useQuery<User[]>({
+    queryKey: ["/api/users"],
   });
 
   const updateTrackingMutation = useMutation({
@@ -74,6 +81,29 @@ export default function Finalization() {
       toast({
         title: "Erro",
         description: error.message || "Erro ao remover rastreio",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: InsertUser) => {
+      const response = await apiRequest("POST", "/api/users", userData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      toast({
+        title: "Sucesso!",
+        description: "Usuário adicionado com sucesso.",
+      });
+      setNewUserName("");
+      setShowUserForm(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao adicionar usuário",
         variant: "destructive",
       });
     },
@@ -124,19 +154,101 @@ export default function Finalization() {
     return editingValues[tracking.id]?.[field] ?? tracking[field] ?? "";
   };
 
+  const handleCreateUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newUserName.trim()) {
+      createUserMutation.mutate({ name: newUserName.trim() });
+    }
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">Carregando...</div>;
   }
 
   return (
-    <Card className="shadow-sm border border-border">
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-border">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
-            <p className="text-sm text-muted-foreground mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
+    <div className="space-y-6">
+      {/* Users Management Section */}
+      <Card className="shadow-sm border border-border">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users size={20} />
+            Gerenciar Usuários
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Add User Form */}
+            <div className="flex items-center gap-2">
+              {!showUserForm ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowUserForm(true)}
+                  data-testid="button-add-user"
+                >
+                  <Plus size={16} className="mr-2" />
+                  Adicionar Usuário
+                </Button>
+              ) : (
+                <form onSubmit={handleCreateUser} className="flex items-center gap-2">
+                  <Input
+                    placeholder="Nome do usuário"
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    className="w-64"
+                    data-testid="input-new-user-name"
+                  />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={createUserMutation.isPending || !newUserName.trim()}
+                    data-testid="button-save-user"
+                  >
+                    <Check size={16} />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowUserForm(false);
+                      setNewUserName("");
+                    }}
+                    data-testid="button-cancel-user"
+                  >
+                    Cancelar
+                  </Button>
+                </form>
+              )}
+            </div>
+
+            {/* Users List */}
+            <div className="flex flex-wrap gap-2">
+              {users.map((user) => (
+                <Badge key={user.id} variant="secondary" className="text-sm py-1 px-3" data-testid={`badge-user-${user.id}`}>
+                  {user.name}
+                </Badge>
+              ))}
+              {users.length === 0 && !usersLoading && (
+                <p className="text-muted-foreground text-sm">Nenhum usuário cadastrado</p>
+              )}
+              {usersLoading && (
+                <p className="text-muted-foreground text-sm">Carregando usuários...</p>
+              )}
+            </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Tracking Management Section */}
+      <Card className="shadow-sm border border-border">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-border">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
+              <p className="text-sm text-muted-foreground mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
+            </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm text-muted-foreground">
               Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
@@ -301,6 +413,7 @@ export default function Finalization() {
           </div>
         )}
       </div>
-    </Card>
+      </Card>
+    </div>
   );
 }
