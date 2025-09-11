@@ -157,12 +157,13 @@ export default function Finalization() {
   };
 
   const handleEdit = (trackingId: string, tracking: Tracking) => {
-    // Só permite editar se o status for PENDENTE e não foi confirmado
-    if ((tracking.status || "PENDENTE") !== "PENDENTE" || confirmedStates[trackingId]) {
-      return;
+    // Só permite editar itens que não são PENDENTE (PENDENTE é sempre editável)
+    const status = tracking.status || "PENDENTE";
+    if (status === "PENDENTE") {
+      return; // PENDENTE não precisa clicar no lápis
     }
     
-    // Ativa o modo de edição
+    // Ativa o modo de edição para status não-PENDENTE
     setEditingStates(prev => ({
       ...prev,
       [trackingId]: true
@@ -180,7 +181,16 @@ export default function Finalization() {
 
   const isEditing = (trackingId: string) => editingStates[trackingId] || false;
   const isConfirmed = (trackingId: string) => confirmedStates[trackingId] || false;
-  const canEdit = (tracking: Tracking) => (tracking.status || "PENDENTE") === "PENDENTE" && !confirmedStates[tracking.id];
+  // Define se os campos podem ser editados:
+  // - PENDENTE: sempre editável (sem precisar clicar no lápis)
+  // - Outros status: só editável após clicar no lápis
+  const canEdit = (tracking: Tracking) => {
+    const status = tracking.status || "PENDENTE";
+    if (status === "PENDENTE") {
+      return true; // PENDENTE sempre pode editar
+    }
+    return isEditing(tracking.id); // Outros status só se estiver editando
+  };
 
   const handleDelete = (trackingId: string) => {
     if (window.confirm("Tem certeza que deseja remover este rastreio?")) {
@@ -292,7 +302,7 @@ export default function Finalization() {
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
-                    disabled={!canEdit(tracking) || !isEditing(tracking.id)}
+                    disabled={!canEdit(tracking)}
                     data-testid={`select-status-${tracking.id}`}
                   >
                     <SelectTrigger className={`w-36 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`}>
@@ -332,16 +342,16 @@ export default function Finalization() {
                       const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
                       handleFieldChange(tracking.id, "quantity", numValue);
                     }}
-                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100 cursor-default' : ''}`}
+                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`}
                     placeholder="0"
-                    disabled={!canEdit(tracking) || !isEditing(tracking.id)}
+                    disabled={!canEdit(tracking)}
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
                 <TableCell>
                   <div className="space-y-2">
                     <Select
-                      value={getFieldValue(tracking, "user")}
+                      value={String(getFieldValue(tracking, "user") || "")}
                       onValueChange={(value) => {
                         if (value === "ADD_NEW") {
                           setShowUserForm(true);
@@ -349,9 +359,9 @@ export default function Finalization() {
                         }
                         handleFieldChange(tracking.id, "user", value);
                       }}
-                      disabled={!canEdit(tracking) || !isEditing(tracking.id)}
+                      disabled={!canEdit(tracking)}
                     >
-                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100 cursor-default' : ''}`} data-testid={`select-user-${tracking.id}`}>
+                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`} data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
                       </SelectTrigger>
                       <SelectContent>
@@ -410,33 +420,34 @@ export default function Finalization() {
                       onClick={() => handleSave(tracking.id)}
                       disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || !canEdit(tracking)}
                       title="Confirmar alterações"
-                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400 disabled:cursor-default"
+                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400"
                       data-testid={`button-confirm-${tracking.id}`}
                     >
                       <Check size={16} />
                     </Button>
 
-                    {/* Editar - Lápis */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(tracking.id, tracking)}
-                      title="Editar"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 disabled:text-gray-400 disabled:cursor-default"
-                      data-testid={`button-edit-${tracking.id}`}
-                      disabled={!canEdit(tracking)}
-                    >
-                      <Edit3 size={16} />
-                    </Button>
+                    {/* Editar - Lápis (só para status não-PENDENTE) */}
+                    {(tracking.status || "PENDENTE") !== "PENDENTE" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(tracking.id, tracking)}
+                        title="Editar"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        data-testid={`button-edit-${tracking.id}`}
+                      >
+                        <Edit3 size={16} />
+                      </Button>
+                    )}
 
                     {/* Excluir - Lixeira */}
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(tracking.id)}
-                      disabled={deleteTrackingMutation.isPending || !canEdit(tracking)}
+                      disabled={deleteTrackingMutation.isPending}
                       title="Excluir rastreio"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400 disabled:cursor-default"
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400"
                       data-testid={`button-delete-${tracking.id}`}
                     >
                       <Trash2 size={16} />
