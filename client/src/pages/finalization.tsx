@@ -305,7 +305,15 @@ export default function Finalization() {
                     disabled={!canEdit(tracking)}
                     data-testid={`select-status-${tracking.id}`}
                   >
-                    <SelectTrigger className={`w-36 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`}>
+                    <SelectTrigger className={`w-36 ${
+                      !canEdit(tracking) 
+                        ? (tracking.status === "TC_FINALIZADO" 
+                          ? 'text-green-700 bg-green-50 border-green-200' 
+                          : 'text-gray-600 bg-gray-200 border-gray-300')
+                        : (tracking.status === "TC_FINALIZADO" 
+                          ? 'text-green-700 bg-green-50 border-green-200' 
+                          : '')
+                    }`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -342,7 +350,7 @@ export default function Finalization() {
                       const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
                       handleFieldChange(tracking.id, "quantity", numValue);
                     }}
-                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`}
+                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`}
                     placeholder="0"
                     disabled={!canEdit(tracking)}
                     data-testid={`input-quantity-${tracking.id}`}
@@ -361,7 +369,7 @@ export default function Finalization() {
                       }}
                       disabled={!canEdit(tracking)}
                     >
-                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`} data-testid={`select-user-${tracking.id}`}>
+                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`} data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
                       </SelectTrigger>
                       <SelectContent>
