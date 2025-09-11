@@ -381,21 +381,50 @@ export default function Finalization() {
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1">
+                    {/* Editar - Lápis */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        // Simula edição colocando valores atuais nos campos editáveis
+                        setEditingValues(prev => ({
+                          ...prev,
+                          [tracking.id]: {
+                            status: tracking.status || "PENDENTE",
+                            quantity: tracking.quantity || 0,
+                            user: tracking.user || ""
+                          }
+                        }));
+                      }}
+                      title="Editar"
+                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      data-testid={`button-edit-${tracking.id}`}
+                    >
+                      <Edit3 size={16} />
+                    </Button>
+                    
+                    {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSave(tracking.id)}
-                      disabled={updateTrackingMutation.isPending}
-                      data-testid={`button-save-${tracking.id}`}
+                      disabled={updateTrackingMutation.isPending || !editingValues[tracking.id]}
+                      title="Confirmar alterações"
+                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400"
+                      data-testid={`button-confirm-${tracking.id}`}
                     >
-                      <Save size={16} />
+                      <Check size={16} />
                     </Button>
+                    
+                    {/* Excluir - Lixeira */}
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(tracking.id)}
                       disabled={deleteTrackingMutation.isPending}
+                      title="Excluir rastreio"
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
                       data-testid={`button-delete-${tracking.id}`}
                     >
                       <Trash2 size={16} />
