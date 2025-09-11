@@ -36,6 +36,7 @@ export default function Finalization() {
   const [editingValues, setEditingValues] = useState<Record<string, Partial<UpdateTracking>>>({});
   const [newUserName, setNewUserName] = useState("");
   const [showUserForm, setShowUserForm] = useState(false);
+  const [editingStates, setEditingStates] = useState<Record<string, boolean>>({});
 
   const { data: trackings = [], isLoading, refetch } = useQuery<Tracking[]>({
     queryKey: ["/api/trackings"],
@@ -141,8 +142,32 @@ export default function Finalization() {
         delete newValues[trackingId];
         return newValues;
       });
+      // Desabilita o modo de edição após salvar
+      setEditingStates(prev => ({
+        ...prev,
+        [trackingId]: false
+      }));
     }
   };
+
+  const handleEdit = (trackingId: string, tracking: Tracking) => {
+    // Ativa o modo de edição
+    setEditingStates(prev => ({
+      ...prev,
+      [trackingId]: true
+    }));
+    // Pré-preenche os valores atuais
+    setEditingValues(prev => ({
+      ...prev,
+      [trackingId]: {
+        status: tracking.status || "PENDENTE",
+        quantity: tracking.quantity || 0,
+        user: tracking.user || ""
+      }
+    }));
+  };
+
+  const isEditing = (trackingId: string) => editingStates[trackingId] || false;
 
   const handleDelete = (trackingId: string) => {
     if (window.confirm("Tem certeza que deseja remover este rastreio?")) {
@@ -254,6 +279,7 @@ export default function Finalization() {
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
+                    disabled={!isEditing(tracking.id)}
                     data-testid={`select-status-${tracking.id}`}
                   >
                     <SelectTrigger className="w-36">
@@ -295,6 +321,7 @@ export default function Finalization() {
                     }}
                     className="w-20"
                     placeholder="0"
+                    disabled={!isEditing(tracking.id)}
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
@@ -309,6 +336,7 @@ export default function Finalization() {
                         }
                         handleFieldChange(tracking.id, "user", value);
                       }}
+                      disabled={!isEditing(tracking.id)}
                     >
                       <SelectTrigger className="w-full" data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
@@ -362,28 +390,6 @@ export default function Finalization() {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-1">
-                    {/* Editar - Lápis */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        // Simula edição colocando valores atuais nos campos editáveis
-                        setEditingValues(prev => ({
-                          ...prev,
-                          [tracking.id]: {
-                            status: tracking.status || "PENDENTE",
-                            quantity: tracking.quantity || 0,
-                            user: tracking.user || ""
-                          }
-                        }));
-                      }}
-                      title="Editar"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                      data-testid={`button-edit-${tracking.id}`}
-                    >
-                      <Edit3 size={16} />
-                    </Button>
-
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
@@ -395,6 +401,18 @@ export default function Finalization() {
                       data-testid={`button-confirm-${tracking.id}`}
                     >
                       <Check size={16} />
+                    </Button>
+
+                    {/* Editar - Lápis */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(tracking.id, tracking)}
+                      title="Editar"
+                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      data-testid={`button-edit-${tracking.id}`}
+                    >
+                      <Edit3 size={16} />
                     </Button>
 
                     {/* Excluir - Lixeira */}
