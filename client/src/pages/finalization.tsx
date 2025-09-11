@@ -37,6 +37,7 @@ export default function Finalization() {
   const [newUserName, setNewUserName] = useState("");
   const [showUserForm, setShowUserForm] = useState(false);
   const [editingStates, setEditingStates] = useState<Record<string, boolean>>({});
+  const [confirmedStates, setConfirmedStates] = useState<Record<string, boolean>>({}); // Estado para rastrear itens confirmados
 
   const { data: trackings = [], isLoading, refetch } = useQuery<Tracking[]>({
     queryKey: ["/api/trackings"],
@@ -147,6 +148,11 @@ export default function Finalization() {
         ...prev,
         [trackingId]: false
       }));
+      // Marca como confirmado
+      setConfirmedStates(prev => ({
+        ...prev,
+        [trackingId]: true
+      }));
     }
   };
 
@@ -168,6 +174,7 @@ export default function Finalization() {
   };
 
   const isEditing = (trackingId: string) => editingStates[trackingId] || false;
+  const isConfirmed = (trackingId: string) => confirmedStates[trackingId] || false; // Função para verificar se está confirmado
 
   const handleDelete = (trackingId: string) => {
     if (window.confirm("Tem certeza que deseja remover este rastreio?")) {
@@ -279,7 +286,7 @@ export default function Finalization() {
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
-                    disabled={!isEditing(tracking.id)}
+                    disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
                     data-testid={`select-status-${tracking.id}`}
                   >
                     <SelectTrigger className="w-36">
@@ -321,7 +328,7 @@ export default function Finalization() {
                     }}
                     className="w-20"
                     placeholder="0"
-                    disabled={!isEditing(tracking.id)}
+                    disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
@@ -336,7 +343,7 @@ export default function Finalization() {
                         }
                         handleFieldChange(tracking.id, "user", value);
                       }}
-                      disabled={!isEditing(tracking.id)}
+                      disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
                     >
                       <SelectTrigger className="w-full" data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
@@ -395,7 +402,7 @@ export default function Finalization() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSave(tracking.id)}
-                      disabled={updateTrackingMutation.isPending || !editingValues[tracking.id]}
+                      disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || isConfirmed(tracking.id)}
                       title="Confirmar alterações"
                       className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400"
                       data-testid={`button-confirm-${tracking.id}`}
@@ -411,6 +418,7 @@ export default function Finalization() {
                       title="Editar"
                       className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                       data-testid={`button-edit-${tracking.id}`}
+                      disabled={isConfirmed(tracking.id)} // Desabilita o botão de editar se já confirmado
                     >
                       <Edit3 size={16} />
                     </Button>
@@ -420,7 +428,7 @@ export default function Finalization() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(tracking.id)}
-                      disabled={deleteTrackingMutation.isPending}
+                      disabled={deleteTrackingMutation.isPending || isConfirmed(tracking.id)} // Desabilita a exclusão se já confirmado
                       title="Excluir rastreio"
                       className="text-red-600 hover:text-red-800 hover:bg-red-50"
                       data-testid={`button-delete-${tracking.id}`}
