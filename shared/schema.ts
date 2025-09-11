@@ -5,8 +5,7 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  name: text("name").notNull().unique(),
 });
 
 export const trackings = pgTable("trackings", {
@@ -20,8 +19,7 @@ export const trackings = pgTable("trackings", {
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+  name: true,
 });
 
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
