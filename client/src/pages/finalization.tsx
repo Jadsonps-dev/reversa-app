@@ -157,6 +157,11 @@ export default function Finalization() {
   };
 
   const handleEdit = (trackingId: string, tracking: Tracking) => {
+    // Só permite editar se o status for PENDENTE e não foi confirmado
+    if ((tracking.status || "PENDENTE") !== "PENDENTE" || confirmedStates[trackingId]) {
+      return;
+    }
+    
     // Ativa o modo de edição
     setEditingStates(prev => ({
       ...prev,
@@ -174,7 +179,8 @@ export default function Finalization() {
   };
 
   const isEditing = (trackingId: string) => editingStates[trackingId] || false;
-  const isConfirmed = (trackingId: string) => confirmedStates[trackingId] || false; // Função para verificar se está confirmado
+  const isConfirmed = (trackingId: string) => confirmedStates[trackingId] || false;
+  const canEdit = (tracking: Tracking) => (tracking.status || "PENDENTE") === "PENDENTE" && !confirmedStates[tracking.id];
 
   const handleDelete = (trackingId: string) => {
     if (window.confirm("Tem certeza que deseja remover este rastreio?")) {
@@ -286,10 +292,10 @@ export default function Finalization() {
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
-                    disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
+                    disabled={!canEdit(tracking) || !isEditing(tracking.id)}
                     data-testid={`select-status-${tracking.id}`}
                   >
-                    <SelectTrigger className="w-36">
+                    <SelectTrigger className={`w-36 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -326,9 +332,9 @@ export default function Finalization() {
                       const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
                       handleFieldChange(tracking.id, "quantity", numValue);
                     }}
-                    className="w-20"
+                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100 cursor-default' : ''}`}
                     placeholder="0"
-                    disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
+                    disabled={!canEdit(tracking) || !isEditing(tracking.id)}
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
@@ -343,9 +349,9 @@ export default function Finalization() {
                         }
                         handleFieldChange(tracking.id, "user", value);
                       }}
-                      disabled={!isEditing(tracking.id) || isConfirmed(tracking.id)}
+                      disabled={!canEdit(tracking) || !isEditing(tracking.id)}
                     >
-                      <SelectTrigger className="w-full" data-testid={`select-user-${tracking.id}`}>
+                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-400 bg-gray-100 cursor-default' : ''}`} data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
                       </SelectTrigger>
                       <SelectContent>
@@ -402,9 +408,9 @@ export default function Finalization() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSave(tracking.id)}
-                      disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || isConfirmed(tracking.id)}
+                      disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || !canEdit(tracking)}
                       title="Confirmar alterações"
-                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400"
+                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400 disabled:cursor-default"
                       data-testid={`button-confirm-${tracking.id}`}
                     >
                       <Check size={16} />
@@ -416,9 +422,9 @@ export default function Finalization() {
                       size="sm"
                       onClick={() => handleEdit(tracking.id, tracking)}
                       title="Editar"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 disabled:text-gray-400 disabled:cursor-default"
                       data-testid={`button-edit-${tracking.id}`}
-                      disabled={isConfirmed(tracking.id)} // Desabilita o botão de editar se já confirmado
+                      disabled={!canEdit(tracking)}
                     >
                       <Edit3 size={16} />
                     </Button>
@@ -428,9 +434,9 @@ export default function Finalization() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(tracking.id)}
-                      disabled={deleteTrackingMutation.isPending || isConfirmed(tracking.id)} // Desabilita a exclusão se já confirmado
+                      disabled={deleteTrackingMutation.isPending || !canEdit(tracking)}
                       title="Excluir rastreio"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400 disabled:cursor-default"
                       data-testid={`button-delete-${tracking.id}`}
                     >
                       <Trash2 size={16} />
