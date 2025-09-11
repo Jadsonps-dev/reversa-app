@@ -29,7 +29,7 @@ const statusFilterOptions = [
 export default function Finalization() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [searchFilter, setSearchFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -167,79 +167,6 @@ export default function Finalization() {
 
   return (
     <div className="space-y-6">
-      {/* Users Management Section */}
-      <Card className="shadow-sm border border-border">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users size={20} />
-            Gerenciar Usuários
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {/* Add User Form */}
-            <div className="flex items-center gap-2">
-              {!showUserForm ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowUserForm(true)}
-                  data-testid="button-add-user"
-                >
-                  <Plus size={16} className="mr-2" />
-                  Adicionar Usuário
-                </Button>
-              ) : (
-                <form onSubmit={handleCreateUser} className="flex items-center gap-2">
-                  <Input
-                    placeholder="Nome do usuário"
-                    value={newUserName}
-                    onChange={(e) => setNewUserName(e.target.value)}
-                    className="w-64"
-                    data-testid="input-new-user-name"
-                  />
-                  <Button
-                    type="submit"
-                    size="sm"
-                    disabled={createUserMutation.isPending || !newUserName.trim()}
-                    data-testid="button-save-user"
-                  >
-                    <Check size={16} />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setShowUserForm(false);
-                      setNewUserName("");
-                    }}
-                    data-testid="button-cancel-user"
-                  >
-                    Cancelar
-                  </Button>
-                </form>
-              )}
-            </div>
-
-            {/* Users List */}
-            <div className="flex flex-wrap gap-2">
-              {users.map((user) => (
-                <Badge key={user.id} variant="secondary" className="text-sm py-1 px-3" data-testid={`badge-user-${user.id}`}>
-                  {user.name}
-                </Badge>
-              ))}
-              {users.length === 0 && !usersLoading && (
-                <p className="text-muted-foreground text-sm">Nenhum usuário cadastrado</p>
-              )}
-              {usersLoading && (
-                <p className="text-muted-foreground text-sm">Carregando usuários...</p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Tracking Management Section */}
       <Card className="shadow-sm border border-border">
         {/* Header */}
@@ -281,7 +208,7 @@ export default function Finalization() {
               ))}
             </SelectContent>
           </Select>
-          
+
           <Input
             placeholder="Buscar rastreio..."
             value={searchFilter}
@@ -289,7 +216,7 @@ export default function Finalization() {
             className="w-64"
             data-testid="input-search-filter"
           />
-          
+
           <Input
             type="date"
             value={dateFilter}
@@ -372,13 +299,66 @@ export default function Finalization() {
                   />
                 </TableCell>
                 <TableCell>
-                  <Input
-                    value={getFieldValue(tracking, "user") || ""}
-                    onChange={(e) => handleFieldChange(tracking.id, "user", e.target.value)}
-                    className="w-32"
-                    placeholder="Usuário"
-                    data-testid={`input-user-${tracking.id}`}
-                  />
+                  <div className="space-y-2">
+                    <Select
+                      value={getFieldValue(tracking, "user")}
+                      onValueChange={(value) => {
+                        if (value === "ADD_NEW") {
+                          setShowUserForm(true);
+                          return;
+                        }
+                        handleFieldChange(tracking.id, "user", value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full" data-testid={`select-user-${tracking.id}`}>
+                        <SelectValue placeholder="Selecionar usuário" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.name}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="ADD_NEW" className="text-blue-600 font-medium">
+                          + Adicionar novo usuário
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Add new user form - shown when "ADD_NEW" is selected */}
+                    {showUserForm && (
+                      <form onSubmit={handleCreateUser} className="flex items-center gap-2">
+                        <Input
+                          placeholder="Nome do novo usuário"
+                          value={newUserName}
+                          onChange={(e) => setNewUserName(e.target.value)}
+                          className="flex-1"
+                          data-testid="input-new-user-name"
+                          autoFocus
+                        />
+                        <Button
+                          type="submit"
+                          size="sm"
+                          disabled={createUserMutation.isPending || !newUserName.trim()}
+                          data-testid="button-save-user"
+                        >
+                          <Check size={16} />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setShowUserForm(false);
+                            setNewUserName("");
+                          }}
+                          data-testid="button-cancel-user"
+                        >
+                          Cancelar
+                        </Button>
+                      </form>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-1">
@@ -403,7 +383,7 @@ export default function Finalization() {
                     >
                       <Edit3 size={16} />
                     </Button>
-                    
+
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
@@ -416,7 +396,7 @@ export default function Finalization() {
                     >
                       <Check size={16} />
                     </Button>
-                    
+
                     {/* Excluir - Lixeira */}
                     <Button
                       variant="ghost"
@@ -435,7 +415,7 @@ export default function Finalization() {
             ))}
           </TableBody>
         </Table>
-        
+
         {filteredTrackings.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             Nenhum rastreio encontrado
