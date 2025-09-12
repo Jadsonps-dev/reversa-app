@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/layout/header";
 import Entry from "@/pages/entry";
+import Reversa from "@/pages/reversa";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
 import Login from "@/pages/login";
@@ -15,6 +16,7 @@ function Router() {
     <Switch>
       <Route path="/login" component={Login} />
       <Route path="/" component={Entry} />
+      <Route path="/reversa" component={Reversa} />
       <Route path="/finalization" component={Finalization} />
       <Route path="/reports" component={Reports} />
       <Route component={NotFound} />
