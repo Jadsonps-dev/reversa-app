@@ -18,6 +18,7 @@ export default function Entry() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastTrackingCode, setLastTrackingCode] = useState("");
+  const [activeMode, setActiveMode] = useState<"reversa" | "insucesso">("reversa");
 
   const form = useForm<InsertTracking>({
     resolver: zodResolver(insertTrackingSchema),
@@ -78,12 +79,39 @@ export default function Entry() {
     <div className="max-w-2xl mx-auto">
       <Card className="shadow-sm border border-border p-8">
         <CardContent className="pt-0">
+          {/* Mode Selection Buttons */}
+          <div className="flex gap-4 mb-8">
+            <Button
+              type="button"
+              variant={activeMode === "reversa" ? "default" : "outline"}
+              onClick={() => setActiveMode("reversa")}
+              className="flex-1 py-3 text-base font-medium"
+            >
+              Reversa
+            </Button>
+            <Button
+              type="button"
+              variant={activeMode === "insucesso" ? "default" : "outline"}
+              onClick={() => setActiveMode("insucesso")}
+              className="flex-1 py-3 text-base font-medium"
+            >
+              Insucesso
+            </Button>
+          </div>
+
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Barcode className="text-primary text-3xl" />
             </div>
-            <h2 className="text-2xl font-semibold text-foreground mb-2">Escaneamento de Rastreio</h2>
-            <p className="text-muted-foreground">Escaneie ou digite o código de rastreio para registrar a entrada</p>
+            <h2 className="text-2xl font-semibold text-foreground mb-2">
+              {activeMode === "reversa" ? "Escaneamento de Rastreio" : "Registro de Insucesso"}
+            </h2>
+            <p className="text-muted-foreground">
+              {activeMode === "reversa" 
+                ? "Escaneie ou digite o código de rastreio para registrar a entrada"
+                : "Escaneie ou digite o código de rastreio para registrar o insucesso"
+              }
+            </p>
           </div>
 
           <Form {...form}>
@@ -98,7 +126,11 @@ export default function Entry() {
                       <Input
                         {...field}
                         ref={inputRef}
-                        placeholder="Escaneie ou digite o código de rastreio"
+                        placeholder={
+                          activeMode === "reversa" 
+                            ? "Escaneie ou digite o código de rastreio"
+                            : "Escaneie ou digite o código para insucesso"
+                        }
                         className="text-lg min-h-12"
                         autoComplete="off"
                         data-testid="input-tracking-code"
@@ -116,7 +148,12 @@ export default function Entry() {
                 data-testid="button-submit-tracking"
               >
                 <Save className="mr-2" size={16} />
-                {createTrackingMutation.isPending ? "Registrando..." : "Registrar Entrada"}
+                {createTrackingMutation.isPending 
+                  ? "Registrando..." 
+                  : activeMode === "reversa" 
+                    ? "Registrar Entrada" 
+                    : "Registrar Insucesso"
+                }
               </Button>
             </form>
           </Form>
@@ -126,7 +163,9 @@ export default function Entry() {
               <div className="flex items-center">
                 <Check className="text-green-600 dark:text-green-400 mr-3" size={20} />
                 <div>
-                  <h3 className="text-sm font-medium text-green-800 dark:text-green-200">Rastreio registrado com sucesso!</h3>
+                  <h3 className="text-sm font-medium text-green-800 dark:text-green-200">
+                    {activeMode === "reversa" ? "Rastreio registrado com sucesso!" : "Insucesso registrado com sucesso!"}
+                  </h3>
                   <p className="text-sm text-green-700 dark:text-green-300 mt-1">{lastTrackingCode}</p>
                 </div>
               </div>
@@ -135,7 +174,9 @@ export default function Entry() {
 
           {recentEntries.length > 0 && (
             <div className="mt-8 pt-6 border-t border-border">
-              <h3 className="text-lg font-medium text-foreground mb-4">Últimas Entradas</h3>
+              <h3 className="text-lg font-medium text-foreground mb-4">
+                {activeMode === "reversa" ? "Últimas Entradas" : "Últimos Insucessos"}
+              </h3>
               <div className="space-y-2">
                 {recentEntries.map((entry) => (
                   <div key={entry.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
