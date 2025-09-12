@@ -7,11 +7,13 @@ import { Header } from "@/components/layout/header";
 import Entry from "@/pages/entry";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
+import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
+      <Route path="/login" component={Login} />
       <Route path="/" component={Entry} />
       <Route path="/finalization" component={Finalization} />
       <Route path="/reports" component={Reports} />
