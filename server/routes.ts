@@ -21,11 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertTrackingSchema.parse(req.body);
       
-      // Check if tracking code already exists
-      const existingTracking = await storage.getTrackingByCode(validatedData.trackingCode);
-      if (existingTracking) {
-        return res.status(400).json({ message: "Código de rastreio já existe" });
-      }
+      // Permitir códigos duplicados - removida validação de unicidade
 
       const tracking = await storage.createTracking(validatedData);
       res.status(201).json(tracking);

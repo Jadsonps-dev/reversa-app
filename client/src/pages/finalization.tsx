@@ -222,10 +222,10 @@ export default function Finalization() {
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
-              <p className="text-sm text-muted-foreground mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
+              <p className="text-sm text-gray-700 mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
             </div>
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-gray-700">
               Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
             </div>
             <Button
@@ -280,22 +280,22 @@ export default function Finalization() {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Rastreio</TableHead>
-              <TableHead>Data Recebido</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Data Finalização</TableHead>
-              <TableHead>Qtd Peças</TableHead>
-              <TableHead>Usuário</TableHead>
-              <TableHead>Ações</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Rastreio</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Data Recebido</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Status</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Data Finalização</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Qtd Peças</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Usuário</TableHead>
+              <TableHead className="text-gray-900 font-semibold">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTrackings.map((tracking) => (
               <TableRow key={tracking.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell className="font-medium" data-testid={`cell-tracking-${tracking.id}`}>
+                <TableCell className="font-medium text-gray-900" data-testid={`cell-tracking-${tracking.id}`}>
                   {tracking.trackingCode}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="text-gray-800">
                   {new Date(tracking.receivedAt).toLocaleString('pt-BR')}
                 </TableCell>
                 <TableCell>
@@ -331,12 +331,12 @@ export default function Finalization() {
                       tracking.status === "TC_FINALIZADO" ? "text-green-600" :
                       tracking.status === "CANCELADO" ? "text-red-600" :
                       tracking.status === "DIVERGENCIA" ? "text-orange-600" :
-                      "text-muted-foreground"
+                      "text-gray-700"
                     }>
                       {new Date(tracking.completedAt).toLocaleString('pt-BR')}
                     </div>
                   ) : (
-                    <div className="text-muted-foreground">-</div>
+                    <div className="text-gray-700">-</div>
                   )}
                 </TableCell>
                 <TableCell>
@@ -468,7 +468,7 @@ export default function Finalization() {
         </Table>
 
         {filteredTrackings.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-gray-700">
             Nenhum rastreio encontrado
           </div>
         )}

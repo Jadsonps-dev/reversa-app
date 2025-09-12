@@ -10,7 +10,7 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
             <Package className="text-primary text-2xl" />
-            <h1 className="text-xl font-semibold text-foreground">Sistema de Rastreamento</h1>
+            <h1 className="text-xl font-semibold text-foreground">Sistema Reversa</h1>
           </div>
           <nav className="flex space-x-4">
             <Link href="/">

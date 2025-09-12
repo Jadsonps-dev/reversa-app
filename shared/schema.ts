@@ -10,7 +10,7 @@ export const users = pgTable("users", {
 
 export const trackings = pgTable("trackings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  trackingCode: text("tracking_code").notNull().unique(),
+  trackingCode: text("tracking_code").notNull(),
   receivedAt: timestamp("received_at").notNull().default(sql`now()`),
   status: text("status", { enum: ["PENDENTE", "TC_FINALIZADO", "CANCELADO", "DIVERGENCIA"] }).default("PENDENTE"),
   completedAt: timestamp("completed_at"),
