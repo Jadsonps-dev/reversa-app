@@ -21,6 +21,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 const empresas = [
   { value: "insider", label: "Insider" },
   { value: "alcance_jeans", label: "Alcance Jeans" },
+  { value: "modab", label: "ModaB" },
 ];
 
 export default function Login() {
