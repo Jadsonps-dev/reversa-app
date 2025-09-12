@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Barcode, Save, Check } from "lucide-react";
 import type { Tracking, InsertTracking } from "@shared/schema";
-import { Link, navigate } from "wouter"; // Assuming wouter is used for routing
+import { Link, useLocation } from "wouter";
 
 export default function Entry() {
   const { toast } = useToast();
@@ -20,6 +20,7 @@ export default function Entry() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastTrackingCode, setLastTrackingCode] = useState("");
   const [activeMode, setActiveMode] = useState<"reversa" | "insucesso">("reversa");
+  const [location, setLocation] = useLocation();
 
   const form = useForm<InsertTracking>({
     resolver: zodResolver(insertTrackingSchema),
@@ -87,7 +88,7 @@ export default function Entry() {
               variant={activeMode === "reversa" ? "default" : "outline"}
               onClick={() => {
                 setActiveMode("reversa");
-                navigate("/reversa"); // Navigate to Reversa page
+                setLocation("/reversa"); // Navigate to Reversa page
               }}
               className="flex-1 py-3 text-base font-medium"
             >
