@@ -67,7 +67,16 @@ export default function Entry() {
 
   const onSubmit = (data: InsertTracking) => {
     if (!data.trackingCode.trim()) return;
-    createTrackingMutation.mutate(data);
+    
+    // Remove tudo após o cifrão ($) se existir
+    const cleanedTrackingCode = data.trackingCode.includes('$') 
+      ? data.trackingCode.split('$')[0]
+      : data.trackingCode;
+    
+    createTrackingMutation.mutate({
+      ...data,
+      trackingCode: cleanedTrackingCode
+    });
   };
 
   // Auto-focus input on mount and after submission
