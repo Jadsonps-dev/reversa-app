@@ -5,7 +5,6 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Header } from "@/components/layout/header";
 import Entry from "@/pages/entry";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
@@ -13,10 +12,15 @@ import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { LogOut, FileInput, CheckSquare, BarChart3 } from "lucide-react";
+import { LogOut, FileInput, CheckSquare, BarChart3, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
 
 function AppSidebar() {
   const [location, setLocation] = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
+    return saved ? JSON.parse(saved) : false;
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -25,6 +29,16 @@ function AppSidebar() {
 
   const handleNavigation = (path: string) => {
     setLocation(path);
+    // Auto-colapsar ao clicar em um item
+    setIsCollapsed(true);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("sidebarCollapsed", JSON.stringify(isCollapsed));
+  }, [isCollapsed]);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const menuItems = [
@@ -39,48 +53,78 @@ function AppSidebar() {
       path: "/finalization",
     },
     {
-      title: "Relatórios",
+      title: "Dashboard",
       icon: BarChart3,
       path: "/reports",
     },
   ];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">SR</span>
-          </div>
-          <h1 className="text-lg font-semibold text-gray-900">Sistema Reversa</h1>
+    <Sidebar className={`transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+      {/* Header com botão hambúrguer */}
+      <SidebarHeader className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          {!isCollapsed && (
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">SR</span>
+              </div>
+              <h1 className="text-lg font-semibold text-gray-900">Sistema Reversa</h1>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSidebar}
+            className="p-1 h-8 w-8"
+            title="Expandir/Encolher Menu"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex-1 p-4">
+      <SidebarContent className="flex-1 p-2">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.path}>
               <SidebarMenuButton
                 onClick={() => handleNavigation(item.path)}
                 isActive={location === item.path}
-                className="w-full justify-start"
+                className={`w-full transition-all duration-200 mb-1 ${
+                  isCollapsed 
+                    ? "justify-center px-2" 
+                    : "justify-start px-3"
+                } ${
+                  location === item.path 
+                    ? "bg-blue-100 text-blue-700 border-r-2 border-blue-600" 
+                    : "hover:bg-gray-100"
+                }`}
+                title={isCollapsed ? item.title : ""}
               >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.title}
+                <item.icon className={`h-5 w-5 ${isCollapsed ? "" : "mr-3"}`} />
+                {!isCollapsed && (
+                  <span className="font-medium">{item.title}</span>
+                )}
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-2 border-t">
         <Button
           variant="ghost"
           onClick={handleLogout}
-          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+          className={`w-full transition-all duration-200 text-red-600 hover:text-red-700 hover:bg-red-50 ${
+            isCollapsed 
+              ? "justify-center px-2" 
+              : "justify-start px-3"
+          }`}
+          title={isCollapsed ? "Sair" : ""}
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sair
+          <LogOut className={`h-5 w-5 ${isCollapsed ? "" : "mr-3"}`} />
+          {!isCollapsed && <span className="font-medium">Sair</span>}
         </Button>
       </SidebarFooter>
     </Sidebar>
@@ -93,13 +137,17 @@ function AuthenticatedLayout() {
       <div className="flex min-h-screen">
         <AppSidebar />
         <SidebarInset className="flex-1">
-          <main className="p-6">
-            <Switch>
-              <Route path="/" component={Entry} />
-              <Route path="/finalization" component={Finalization} />
-              <Route path="/reports" component={Reports} />
-              <Route component={NotFound} />
-            </Switch>
+          <main className="p-8 max-w-7xl mx-auto w-full">
+            <div className="flex justify-center">
+              <div className="w-full max-w-4xl">
+                <Switch>
+                  <Route path="/" component={Entry} />
+                  <Route path="/finalization" component={Finalization} />
+                  <Route path="/reports" component={Reports} />
+                  <Route component={NotFound} />
+                </Switch>
+              </div>
+            </div>
           </main>
         </SidebarInset>
       </div>
