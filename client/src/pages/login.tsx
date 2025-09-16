@@ -1,13 +1,25 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { User, Lock } from "lucide-react";
 import logoUrl from "@assets/logoluft_1758035573661.png";
 
@@ -39,7 +51,7 @@ export default function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
-    
+
     try {
       const response = await fetch("/api/login", {
         method: "POST",
@@ -76,9 +88,9 @@ export default function Login() {
       <Card className="w-full max-w-md shadow-lg border border-border">
         <CardHeader className="text-center pb-6">
           <div className="mx-auto mb-4">
-            <img 
-              src={logoUrl} 
-              alt="Luft Logistics" 
+            <img
+              src={logoUrl}
+              alt="Luft Logistics"
               className="h-16 w-auto mx-auto"
             />
           </div>
@@ -100,17 +112,22 @@ export default function Login() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <img src={logoUrl} alt="Logo" className="w-4 h-4" />
                       Empresa
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione sua empresa" />
                         </SelectTrigger>
                         <SelectContent>
                           {empresas.map((empresa) => (
-                            <SelectItem key={empresa.value} value={empresa.value}>
+                            <SelectItem
+                              key={empresa.value}
+                              value={empresa.value}
+                            >
                               {empresa.label}
                             </SelectItem>
                           ))}
