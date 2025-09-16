@@ -73,14 +73,23 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
     };
   };
 
+  // Função para formatar nome da empresa
+  const formatEmpresaName = (empresa: string) => {
+    return empresa
+      .replace(/_/g, ' ') // Substitui underscore por espaço
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   const { date, time } = formatDateTime(currentTime);
-  const empresaName = userInfo?.empresa || 'Carregando...';
+  const empresaName = userInfo?.empresa ? formatEmpresaName(userInfo.empresa) : 'Carregando...';
 
   return (
     <header className={`fixed top-0 right-0 z-50 bg-white border-b-2 border-blue-200 shadow-md transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'}`}>
       <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-        {/* Logo e Sistema */}
-        <div className="flex items-center space-x-3">
+        {/* Logo */}
+        <div className="flex items-center space-x-3 flex-shrink-0">
           <img 
             src={logoUrl} 
             alt="Luft Logistics" 
@@ -89,17 +98,17 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
           <h1 className="text-lg sm:text-xl font-bold text-gray-900 block lg:hidden">Sistema Reversa</h1>
         </div>
 
-        {/* Área Central - Sistema Reversa destacado em telas grandes */}
-        <div className="hidden lg:block">
+        {/* Área Central - Sistema Reversa destacado e centralizado */}
+        <div className="hidden lg:flex flex-1 justify-center">
           <h1 className="text-2xl font-bold text-blue-700">Sistema Reversa</h1>
         </div>
 
         {/* Informações da direita */}
-        <div className="flex items-center space-x-4 lg:space-x-6">
+        <div className="flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
           {/* Nome da Empresa */}
           <div className="hidden sm:block text-right">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
-            <p className="text-sm font-bold text-gray-900" data-testid="text-empresa">
+            <p className="text-sm font-bold text-blue-700" data-testid="text-empresa">
               {empresaName}
             </p>
           </div>
