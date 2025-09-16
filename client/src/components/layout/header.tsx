@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, useLocation } from "wouter";
 import { Package, PlusCircle, List, BarChart3 } from "lucide-react";
 
