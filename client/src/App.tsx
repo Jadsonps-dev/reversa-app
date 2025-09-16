@@ -151,7 +151,7 @@ function AuthenticatedLayout() {
       <SidebarProvider>
         <div className="flex min-h-screen pt-16">
           <AppSidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
-          <main className="flex-1 p-6 min-h-0">
+          <main className="flex-1 p-2 sm:p-3 min-h-0">
             <Switch>
               <Route path="/" component={Entry} />
               <Route path="/finalization" component={Finalization} />

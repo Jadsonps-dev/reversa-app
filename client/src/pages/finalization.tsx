@@ -244,11 +244,11 @@ export default function Finalization() {
   }
 
   return (
-    <div className="w-full max-w-full space-y-4 px-3 sm:px-4">
+    <div className="w-full max-w-full space-y-4 px-1 sm:px-2">
       {/* Tracking Management Section */}
       <Card className="shadow-sm border border-border w-full max-w-full overflow-hidden">
         {/* Header */}
-        <div className="px-3 sm:px-4 py-3 border-b border-border">
+        <div className="px-2 sm:px-3 py-3 border-b border-border">
           <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
             <div className="flex-shrink-0">
               <h2 className="text-lg sm:text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
@@ -302,7 +302,7 @@ export default function Finalization() {
         </div>
 
       {/* Filters */}
-      <div className="px-3 sm:px-4 py-3 bg-muted/30 border-b border-border">
+      <div className="px-2 sm:px-3 py-3 bg-muted/30 border-b border-border">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 lg:items-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full lg:w-48" data-testid="select-status-filter">
@@ -336,7 +336,7 @@ export default function Finalization() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto px-3 sm:px-4 pb-4">
+      <div className="overflow-x-auto px-2 sm:px-3 pb-4">
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
