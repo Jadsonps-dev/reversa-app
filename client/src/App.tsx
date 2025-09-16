@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
@@ -10,6 +9,7 @@ import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
 import Admin from "@/pages/admin";
 import Login from "@/pages/login";
+import AdminLogin from "@/pages/admin-login";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -101,12 +101,12 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
                 onClick={() => handleNavigation(item.path)}
                 isActive={location === item.path}
                 className={`w-full transition-all duration-200 mb-1 ${
-                  isCollapsed 
-                    ? "justify-center px-2" 
+                  isCollapsed
+                    ? "justify-center px-2"
                     : "justify-start px-3"
                 } ${
-                  location === item.path 
-                    ? "bg-blue-100 text-blue-700 border-r-2 border-blue-600" 
+                  location === item.path
+                    ? "bg-blue-100 text-blue-700 border-r-2 border-blue-600"
                     : "hover:bg-gray-100"
                 }`}
                 title={isCollapsed ? item.title : ""}
@@ -126,8 +126,8 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
           variant="ghost"
           onClick={handleLogout}
           className={`w-full transition-all duration-200 text-red-600 hover:text-red-700 hover:bg-red-50 ${
-            isCollapsed 
-              ? "justify-center px-2" 
+            isCollapsed
+              ? "justify-center px-2"
               : "justify-start px-3"
           }`}
           title={isCollapsed ? "Sair" : ""}
@@ -185,6 +185,7 @@ function App() {
             ) : (
               <Switch>
                 <Route path="/login" component={Login} />
+                <Route path="/admin-login" component={AdminLogin} />
                 <Route>
                   {() => {
                     window.location.href = "/login";

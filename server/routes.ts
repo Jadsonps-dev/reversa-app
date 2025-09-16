@@ -155,6 +155,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin login endpoint
+  app.post("/api/admin-login", (req, res, next) => {
+    try {
+      const validatedData = loginSchema.parse(req.body);
+      
+      passport.authenticate("local", (err: any, user: any, info: any) => {
+        if (err) {
+          return next(err);
+        }
+        if (!user) {
+          return res.status(401).json({ message: "Login ou senha inválidos" });
+        }
+        
+        // Verificar se é super admin
+        if (user.login !== 'admin') {
+          return res.status(403).json({ message: "Acesso negado. Apenas administradores podem acessar." });
+        }
+        
+        req.login(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          // Don't send password in response
+          const { password, ...userWithoutPassword } = user;
+          res.json(userWithoutPassword);
+        });
+      })(req, res, next);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      console.error("Error in admin login:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  });
+
   // Login endpoint
   app.post("/api/login", (req, res, next) => {
     try {

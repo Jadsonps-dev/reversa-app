@@ -104,11 +104,11 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
         </div>
 
         {/* Data e Hora - Centralizada */}
-        <div className="flex-1 flex justify-center">
+        <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Data/Hora</p>
             <p className="text-sm font-bold text-gray-900" data-testid="text-datetime">
-              {date} - {time}
+              {date}, {time}
             </p>
           </div>
         </div>
