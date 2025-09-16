@@ -75,10 +75,14 @@ export default function Entry() {
 
     // Determina o statusTipo baseado no modo ativo
     const statusTipo = activeMode === "reversa" ? "REVERSA" : "INSUCESSO";
+    
+    // Determina o statusRastreio baseado no modo ativo
+    const statusRastreio = activeMode === "reversa" ? "normal" : "insucesso";
 
     createTrackingMutation.mutate({
       trackingCode: cleanedTrackingCode,
       statusTipo: statusTipo,
+      statusRastreio: statusRastreio,
       user: null // Pode ser modificado depois para incluir usuário logado
     });
   };

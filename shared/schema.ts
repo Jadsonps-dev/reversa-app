@@ -17,6 +17,7 @@ export const trackings = pgTable("trackings", {
   quantity: integer("quantity").default(0),
   user: text("user"),
   empresa: text("empresa").notNull().default("DEFAULT"),
+  statusRastreio: text("status_rastreio", { enum: ["normal", "insucesso"] }).default("normal"),
 });
 
 export const statusRastreio = pgTable("status_rastreio", {
@@ -34,6 +35,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
   trackingCode: true,
   user: true,
+  statusRastreio: true,
 }).extend({
   statusTipo: z.enum(["REVERSA", "INSUCESSO"]).optional(),
   empresa: z.string().default("DEFAULT").optional(),

@@ -92,14 +92,9 @@ export class DatabaseStorage implements IStorage {
       .where(eq(trackings.id, id))
       .returning();
 
-    // Update status_rastreio entry if status is changed
-    if (updateTracking.status && tracking.status !== updateTracking.status) {
-      await this.createStatusRastreio({
-        trackingId: id,
-        status: updateTracking.status,
-        createdAt: new Date(),
-      });
-    }
+    // Note: status_rastreio entries are created when trackings are created with statusTipo
+    // Status changes here are for workflow status (PENDENTE, TC_FINALIZADO, etc.), 
+    // not for reversa/insucesso tracking
 
     return tracking;
   }
