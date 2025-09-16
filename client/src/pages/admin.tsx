@@ -82,7 +82,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-8">
+    <div className="w-full">
       <div className="w-full max-w-6xl mx-auto space-y-6">
         
         {/* Header */}

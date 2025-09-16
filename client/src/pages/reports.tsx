@@ -92,8 +92,8 @@ export default function Reports() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-8">
-      <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6">
+    <div className="w-full">
+      <div className="w-full space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

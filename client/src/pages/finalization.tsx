@@ -244,8 +244,8 @@ export default function Finalization() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 pt-16">
-      <div className="w-full max-w-7xl mx-auto space-y-4">
+    <div className="w-full">
+      <div className="w-full space-y-4">
         {/* Tracking Management Section */}
         <Card className="shadow-lg border border-border w-full overflow-hidden">
         {/* Header */}
