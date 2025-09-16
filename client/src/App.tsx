@@ -8,11 +8,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Entry from "@/pages/entry";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
+import Admin from "@/pages/admin";
 import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { LogOut, FileInput, CheckSquare, BarChart3, Menu } from "lucide-react";
+import { LogOut, FileInput, CheckSquare, BarChart3, Menu, Users } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { useState, useEffect } from "react";
 
@@ -59,6 +60,11 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
       title: "Dashboard",
       icon: BarChart3,
       path: "/reports",
+    },
+    {
+      title: "Administração",
+      icon: Users,
+      path: "/admin",
     },
   ];
 
@@ -156,6 +162,7 @@ function AuthenticatedLayout() {
               <Route path="/" component={Entry} />
               <Route path="/finalization" component={Finalization} />
               <Route path="/reports" component={Reports} />
+              <Route path="/admin" component={Admin} />
               <Route component={NotFound} />
             </Switch>
           </main>

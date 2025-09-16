@@ -244,9 +244,10 @@ export default function Finalization() {
   }
 
   return (
-    <div className="w-full max-w-full space-y-4 px-1 sm:px-2">
-      {/* Tracking Management Section */}
-      <Card className="shadow-sm border border-border w-full max-w-full overflow-hidden">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 pt-16">
+      <div className="w-full max-w-7xl mx-auto space-y-4">
+        {/* Tracking Management Section */}
+        <Card className="shadow-lg border border-border w-full overflow-hidden">
         {/* Header */}
         <div className="px-2 sm:px-3 py-3 border-b border-border">
           <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
@@ -569,8 +570,9 @@ export default function Finalization() {
             Nenhum rastreio encontrado
           </div>
         )}
+        </div>
+        </Card>
       </div>
-      </Card>
     </div>
   );
 }

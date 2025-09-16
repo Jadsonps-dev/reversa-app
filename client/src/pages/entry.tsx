@@ -101,8 +101,8 @@ export default function Entry() {
     .slice(0, 5);
 
   return (
-    <div className="min-h-full flex items-center justify-center pt-4 sm:pt-8">
-      <div className="w-full max-w-2xl mx-auto px-2 sm:px-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl mx-auto">
         <Card className="shadow-lg border border-border">
         <CardContent className="p-4 sm:p-8">
           {/* Mode Selection Buttons */}

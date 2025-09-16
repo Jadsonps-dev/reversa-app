@@ -77,43 +77,52 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
   const empresaName = userInfo?.empresa || 'Carregando...';
 
   return (
-    <header className={`fixed top-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'}`}>
-      <div className="flex justify-between items-center h-14 sm:h-16 px-3 sm:px-6">
-          {/* Logo e Sistema */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+    <header className={`fixed top-0 right-0 z-50 bg-white border-b-2 border-blue-200 shadow-md transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'}`}>
+      <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+        {/* Logo e Sistema */}
+        <div className="flex items-center space-x-3">
           <img 
             src={logoUrl} 
             alt="Luft Logistics" 
-            className="h-8 sm:h-10 w-auto"
+            className="h-10 w-auto"
           />
-          <h1 className="text-sm sm:text-xl font-semibold text-gray-900 hidden sm:block">Sistema Reversa</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900 block lg:hidden">Sistema Reversa</h1>
         </div>
 
-        {/* Informações centrais */}
-        <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
+        {/* Área Central - Sistema Reversa destacado em telas grandes */}
+        <div className="hidden lg:block">
+          <h1 className="text-2xl font-bold text-blue-700">Sistema Reversa</h1>
+        </div>
+
+        {/* Informações da direita */}
+        <div className="flex items-center space-x-4 lg:space-x-6">
           {/* Nome da Empresa */}
-          <div className="text-center">
-            <p className="text-xs lg:text-sm text-gray-500">Empresa</p>
-            <p className="text-sm lg:text-base font-semibold text-gray-900" data-testid="text-empresa">{empresaName}</p>
+          <div className="hidden sm:block text-right">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
+            <p className="text-sm font-bold text-gray-900" data-testid="text-empresa">
+              {empresaName}
+            </p>
           </div>
 
           {/* Data e Hora */}
-          <div className="text-center">
-            <p className="text-xs lg:text-sm text-gray-500">Data/Hora</p>
-            <p className="text-sm lg:text-base font-semibold text-gray-900" data-testid="text-datetime">{date} - {time}</p>
+          <div className="hidden md:block text-right">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Data/Hora</p>
+            <p className="text-sm font-bold text-gray-900" data-testid="text-datetime">
+              {date} - {time}
+            </p>
           </div>
-        </div>
 
-        {/* Botão de Sair */}
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="flex items-center space-x-1 sm:space-x-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 px-2 sm:px-4 py-1 sm:py-2"
-          data-testid="button-logout-header"
-        >
-          <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-          <span className="text-xs sm:text-sm">Sair</span>
-        </Button>
+          {/* Botão de Sair */}
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="flex items-center space-x-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 px-3 py-2 h-10"
+            data-testid="button-logout-header"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="text-sm font-medium">Sair</span>
+          </Button>
+        </div>
       </div>
     </header>
   );
