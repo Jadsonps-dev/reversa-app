@@ -341,25 +341,25 @@ export default function Finalization() {
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[100px] px-2">Rastreio</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-2">Data Recebido</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[100px] px-2">Status</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-2">Data Finalização</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[8%] min-w-[70px] px-2">Qtd Peças</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[24%] min-w-[140px] px-2">Usuário</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[110px] px-2">Ações</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[15%] min-w-[120px] px-3">Rastreio</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px] px-3">Data Recebido</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-3">Status</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px] px-3">Data Finalização</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[9%] min-w-[80px] px-3">Qtd Peças</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[120px] px-3">Usuário</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[120px] px-3">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTrackings.map((tracking) => (
               <TableRow key={tracking.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell className="font-medium text-gray-900 text-xs sm:text-sm px-2 py-2" data-testid={`cell-tracking-${tracking.id}`}>
+                <TableCell className="font-medium text-gray-900 text-xs sm:text-sm px-3 py-2" data-testid={`cell-tracking-${tracking.id}`}>
                   <div className="break-all overflow-hidden text-ellipsis">{tracking.trackingCode}</div>
                 </TableCell>
-                <TableCell className="text-gray-800 text-xs sm:text-sm px-2 py-2">
+                <TableCell className="text-gray-800 text-xs sm:text-sm px-3 py-2">
                   <div className="whitespace-nowrap text-ellipsis overflow-hidden">{new Date(tracking.receivedAt).toLocaleString('pt-BR')}</div>
                 </TableCell>
-                <TableCell className="px-2 py-2">
+                <TableCell className="px-3 py-2">
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
@@ -386,7 +386,7 @@ export default function Finalization() {
                     </SelectContent>
                   </Select>
                 </TableCell>
-                <TableCell className="px-2 py-2">
+                <TableCell className="px-3 py-2">
                   {tracking.completedAt ? (
                     <div className={`text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden ${
                       tracking.status === "TC_FINALIZADO" ? "text-green-600" :
@@ -400,7 +400,7 @@ export default function Finalization() {
                     <div className="text-gray-700 text-xs sm:text-sm">-</div>
                   )}
                 </TableCell>
-                <TableCell className="px-2 py-2">
+                <TableCell className="px-3 py-2">
                   <Input
                     type="number"
                     min={0}
@@ -417,7 +417,7 @@ export default function Finalization() {
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
-                <TableCell className="px-2 py-2">
+                <TableCell className="px-3 py-2">
                   <div className="space-y-2">
                     <Select
                       value={String(getFieldValue(tracking, "user") || "")}
@@ -490,7 +490,7 @@ export default function Finalization() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="px-2 py-2">
+                <TableCell className="px-3 py-2">
                   <div className="flex flex-wrap gap-1 justify-center">
                     {/* Confirmar - Check Verde */}
                     <Button
