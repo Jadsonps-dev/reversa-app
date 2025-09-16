@@ -101,10 +101,10 @@ export default function Entry() {
     .slice(0, 5);
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="min-h-full flex items-center justify-center py-8">
       <div className="w-full max-w-2xl">
-        <Card className="shadow-sm border border-border p-8">
-        <CardContent className="pt-0">
+        <Card className="shadow-lg border border-border">
+        <CardContent className="p-8">
           {/* Mode Selection Buttons */}
           <div className="flex gap-4 mb-8">
             <Button

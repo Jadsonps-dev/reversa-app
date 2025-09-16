@@ -146,11 +146,11 @@ function AppSidebar() {
 function AuthenticatedLayout() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-gray-50">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col ml-0 relative">
           <Header />
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 min-h-0">
             <Switch>
               <Route path="/" component={Entry} />
               <Route path="/finalization" component={Finalization} />
