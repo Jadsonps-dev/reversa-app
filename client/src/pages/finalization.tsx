@@ -228,49 +228,51 @@ export default function Finalization() {
               <h2 className="text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
               <p className="text-sm text-gray-700 mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
             </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-700">
-              Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
+            <div className="flex items-center space-x-4">
+              {/* Type Filter Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  variant={typeFilter === "ALL" ? "default" : "outline"}
+                  onClick={() => setTypeFilter("ALL")}
+                  className="px-4 py-2"
+                  size="sm"
+                >
+                  Todos
+                </Button>
+                <Button
+                  variant={typeFilter === "REVERSA" ? "default" : "outline"}
+                  onClick={() => setTypeFilter("REVERSA")}
+                  className="px-4 py-2"
+                  size="sm"
+                >
+                  Reversa
+                </Button>
+                <Button
+                  variant={typeFilter === "INSUCESSO" ? "default" : "outline"}
+                  onClick={() => setTypeFilter("INSUCESSO")}
+                  className="px-4 py-2"
+                  size="sm"
+                >
+                  Insucesso
+                </Button>
+              </div>
+              <div className="text-sm text-gray-700">
+                Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => refetch()}
+                data-testid="button-refresh"
+              >
+                <RefreshCw className="mr-2" size={16} />
+                Atualizar
+              </Button>
             </div>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => refetch()}
-              data-testid="button-refresh"
-            >
-              <RefreshCw className="mr-2" size={16} />
-              Atualizar
-            </Button>
           </div>
         </div>
-      </div>
 
-      {/* Type Filter Buttons */}
-      <div className="px-6 py-4 bg-blue-50/50 border-b border-border">
-        <div className="flex gap-4 justify-center">
-          <Button
-            variant={typeFilter === "ALL" ? "default" : "outline"}
-            onClick={() => setTypeFilter("ALL")}
-            className="px-6 py-2"
-          >
-            Todos
-          </Button>
-          <Button
-            variant={typeFilter === "REVERSA" ? "default" : "outline"}
-            onClick={() => setTypeFilter("REVERSA")}
-            className="px-6 py-2"
-          >
-            Reversa
-          </Button>
-          <Button
-            variant={typeFilter === "INSUCESSO" ? "default" : "outline"}
-            onClick={() => setTypeFilter("INSUCESSO")}
-            className="px-6 py-2"
-          >
-            Insucesso
-          </Button>
-        </div>
-      </div>
+      
 
       {/* Filters */}
       <div className="px-6 py-4 bg-muted/30 border-b border-border">
