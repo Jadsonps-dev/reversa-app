@@ -1,0 +1,24 @@
+3ms :: {"id":"6ea23818-3f8a-4252-a279-bb023b1fc06…
+2:35:03 PM [express] GET /api/trackings 200 in 729ms :: [{"id":"6ea23818-3f8a-4252-a279-bb023b1fc06e…
+2:35:05 PM [express] POST /api/trackings 201 in 734ms :: {"id":"2888610e-095f-4c60-9596-a413064f1fe7…
+2:35:06 PM [express] GET /api/trackings 200 in 729ms :: [{"id":"2888610e-095f-4c60-9596-a413064f1fe7…
+2:37:10 PM [vite] hmr update /src/App.tsx?v=8pRQGj_quDddMno83BDMN, /src/index.css?v=8pRQGj_quDddMno83BDMN
+2:37:12 PM [vite] Internal server error: Failed to resolve import "react-router-dom" from "client/src/App.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/runner/workspace/client/src/App.tsx:13:82
+  28 |  import Login from "@/pages/login";
+  29 |  import NotFound from "@/pages/not-found";
+  30 |  import { BrowserRouter, Routes, Navigate, useNavigate } from "react-router-dom";
+     |                                                                ^
+  31 |  import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
+  32 |  import { Button } from "@/components/ui/button";
+      at TransformPluginContext._formatError (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:49258:41)
+      at TransformPluginContext.error (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:49253:16)
+      at normalizeUrl (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:64291:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async <anonymous> (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:64423:39)
+      at async Promise.all (index 15)
+      at async TransformPluginContext.transform (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:64350:7)
+      at async PluginContainer.transform (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:49099:18)
+      at async loadAndTransform (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:51977:27)
+      at async viteTransformMiddleware (/home/runner/workspace/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:62105:24)
