@@ -12,7 +12,7 @@ interface UserInfo {
   empresa: string;
 }
 
-export function Header() {
+export function Header({ isCollapsed }: { isCollapsed: boolean }) {
   const [location, setLocation] = useLocation();
   const [currentTime, setCurrentTime] = useState(new Date());
   const queryClient = useQueryClient();
@@ -77,7 +77,7 @@ export function Header() {
   const empresaName = userInfo?.empresa || 'Carregando...';
 
   return (
-    <header className="fixed top-0 left-16 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <header className={`fixed top-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'}`}>
       <div className="flex justify-between items-center h-16 px-6">
           {/* Logo e Sistema */}
         <div className="flex items-center space-x-3">

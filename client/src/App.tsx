@@ -16,12 +16,8 @@ import { LogOut, FileInput, CheckSquare, BarChart3, Menu } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { useState, useEffect } from "react";
 
-function AppSidebar() {
+function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void; }) {
   const [location, setLocation] = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    const saved = localStorage.getItem("sidebarCollapsed");
-    return saved ? JSON.parse(saved) : false;
-  });
 
   const handleLogout = async () => {
     try {
@@ -41,17 +37,12 @@ function AppSidebar() {
 
   const handleNavigation = (path: string) => {
     setLocation(path);
-    // Auto-colapsar ao clicar em um item
-    setIsCollapsed(true);
+    // Auto-colapsar ao clicar em um item se não estiver colapsado
+    if (!isCollapsed) {
+      onToggle();
+    }
   };
 
-  useEffect(() => {
-    localStorage.setItem("sidebarCollapsed", JSON.stringify(isCollapsed));
-  }, [isCollapsed]);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   const menuItems = [
     {
@@ -87,7 +78,7 @@ function AppSidebar() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleSidebar}
+            onClick={onToggle}
             className="p-1 h-8 w-8"
             title="Expandir/Encolher Menu"
           >
@@ -144,12 +135,22 @@ function AppSidebar() {
 }
 
 function AuthenticatedLayout() {
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+    localStorage.setItem("sidebarCollapsed", JSON.stringify(!isCollapsed));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header isCollapsed={isCollapsed} />
       <SidebarProvider>
         <div className="flex min-h-screen pt-16">
-          <AppSidebar />
+          <AppSidebar isCollapsed={isCollapsed} onToggle={toggleSidebar} />
           <main className="flex-1 p-6 min-h-0">
             <Switch>
               <Route path="/" component={Entry} />
