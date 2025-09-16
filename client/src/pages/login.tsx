@@ -40,17 +40,29 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      // Aqui você implementaria a lógica de autenticação
-      console.log("Dados de login:", data);
-      
-      // Simular delay de autenticação
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirecionar para a página principal após login bem-sucedido
-      window.location.href = "/";
-      
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Important for cookies/sessions
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        console.log("Login bem-sucedido:", user);
+        // Redirecionar para a página principal após login bem-sucedido
+        window.location.href = "/";
+      } else {
+        const errorData = await response.json();
+        console.error("Erro no login:", errorData.message);
+        // You could show an error toast here
+        alert(errorData.message || "Erro no login");
+      }
     } catch (error) {
       console.error("Erro no login:", error);
+      alert("Erro de conexão. Tente novamente.");
     } finally {
       setIsLoading(false);
     }

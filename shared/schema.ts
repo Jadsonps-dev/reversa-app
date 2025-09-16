@@ -5,7 +5,10 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull().unique(),
+  name: text("name").notNull(),
+  login: text("login").notNull().unique(),
+  password: text("password").notNull(),
+  empresa: text("empresa", { enum: ["insider", "alcance_jeans", "modab"] }).notNull(),
 });
 
 export const trackings = pgTable("trackings", {
@@ -20,37 +23,32 @@ export const trackings = pgTable("trackings", {
   statusRastreio: text("status_rastreio", { enum: ["normal", "insucesso"] }).default("normal"),
 });
 
-export const statusRastreio = pgTable("status_rastreio", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  trackingCode: text("tracking_code").notNull(),
-  statusTipo: text("status_tipo", { enum: ["REVERSA", "INSUCESSO"] }).notNull(),
-  registradoEm: timestamp("registrado_em").notNull().default(sql`now()`),
-  user: text("user"),
-});
 
 export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
+  login: true,
+  password: true,
+  empresa: true,
+});
+
+export const loginSchema = z.object({
+  empresa: z.enum(["insider", "alcance_jeans", "modab"]),
+  login: z.string().min(1, "Login é obrigatório"),
+  senha: z.string().min(1, "Senha é obrigatória"),
 });
 
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
   trackingCode: true,
   user: true,
   statusRastreio: true,
-}).extend({
-  statusTipo: z.enum(["REVERSA", "INSUCESSO"]).optional(),
-  empresa: z.string().default("DEFAULT").optional(),
-});
-
-export const insertStatusRastreioSchema = createInsertSchema(statusRastreio).pick({
-  trackingCode: true,
-  statusTipo: true,
-  user: true,
+  empresa: true,
 });
 
 export const updateTrackingSchema = createInsertSchema(trackings).pick({
   status: true,
   quantity: true,
   user: true,
+  statusRastreio: true,
 }).partial();
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -58,5 +56,3 @@ export type User = typeof users.$inferSelect;
 export type InsertTracking = z.infer<typeof insertTrackingSchema>;
 export type UpdateTracking = z.infer<typeof updateTrackingSchema>;
 export type Tracking = typeof trackings.$inferSelect;
-export type InsertStatusRastreio = z.infer<typeof insertStatusRastreioSchema>;
-export type StatusRastreio = typeof statusRastreio.$inferSelect;

@@ -1,10 +1,11 @@
-import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, trackings, users, statusRastreio, type InsertStatusRastreio, type StatusRastreio } from "@shared/schema";
+import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, trackings, users } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByName(name: string): Promise<User | undefined>;
+  getUserByLogin(login: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
 
@@ -14,11 +15,6 @@ export interface IStorage {
   createTracking(tracking: InsertTracking): Promise<Tracking>;
   updateTracking(id: string, tracking: UpdateTracking): Promise<Tracking>;
   deleteTracking(id: string): Promise<void>;
-
-  // StatusRastreio methods
-  createStatusRastreio(status: InsertStatusRastreio): Promise<StatusRastreio>;
-  getAllStatusRastreio(): Promise<StatusRastreio[]>;
-  getStatusRastreioByTrackingCode(trackingCode: string): Promise<StatusRastreio[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -29,6 +25,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByName(name: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.name, name));
+    return user || undefined;
+  }
+
+  async getUserByLogin(login: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.login, login));
     return user || undefined;
   }
 
@@ -56,22 +57,14 @@ export class DatabaseStorage implements IStorage {
   async createTracking(insertTracking: InsertTracking): Promise<Tracking> {
     const trackingData = {
       ...insertTracking,
-      empresa: insertTracking.empresa || "DEFAULT"
+      empresa: insertTracking.empresa || "DEFAULT",
+      statusRastreio: insertTracking.statusRastreio || "normal"
     };
     
     const [tracking] = await db
       .insert(trackings)
       .values(trackingData)
       .returning();
-
-    // Create status_rastreio entry if statusTipo is provided
-    if (insertTracking.statusTipo) {
-      await this.createStatusRastreio({
-        trackingCode: tracking.trackingCode,
-        statusTipo: insertTracking.statusTipo,
-        user: tracking.user || null,
-      });
-    }
 
     return tracking;
   }
@@ -101,22 +94,6 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTracking(id: string): Promise<void> {
     await db.delete(trackings).where(eq(trackings.id, id));
-  }
-
-  async createStatusRastreio(insertStatusRastreio: InsertStatusRastreio): Promise<StatusRastreio> {
-    const [statusRastreioEntry] = await db
-      .insert(statusRastreio)
-      .values(insertStatusRastreio)
-      .returning();
-    return statusRastreioEntry;
-  }
-
-  async getAllStatusRastreio(): Promise<StatusRastreio[]> {
-    return await db.select().from(statusRastreio).orderBy(desc(statusRastreio.registradoEm));
-  }
-
-  async getStatusRastreioByTrackingCode(trackingCode: string): Promise<StatusRastreio[]> {
-    return await db.select().from(statusRastreio).where(eq(statusRastreio.trackingCode, trackingCode));
   }
 }
 

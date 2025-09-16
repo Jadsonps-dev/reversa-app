@@ -1,14 +1,22 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, insertStatusRastreioSchema } from "@shared/schema";
+import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, loginSchema } from "@shared/schema";
+import { setupAuth, hashPassword } from "./auth";
+import passport from "passport";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all trackings
+  // Get all trackings (filtered by company if user is authenticated)
   app.get("/api/trackings", async (req, res) => {
     try {
-      const trackings = await storage.getAllTrackings();
+      let trackings = await storage.getAllTrackings();
+      
+      // Filter by company if user is authenticated
+      if (req.isAuthenticated() && req.user) {
+        trackings = trackings.filter(tracking => tracking.empresa === req.user.empresa);
+      }
+      
       res.json(trackings);
     } catch (error) {
       console.error("Error fetching trackings:", error);
@@ -21,7 +29,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertTrackingSchema.parse(req.body);
       
-      // Permitir códigos duplicados - removida validação de unicidade
+      // Set empresa from authenticated user if available
+      if (req.isAuthenticated() && req.user) {
+        validatedData.empresa = req.user.empresa;
+      }
 
       const tracking = await storage.createTracking(validatedData);
       res.status(201).json(tracking);
@@ -79,14 +90,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertUserSchema.parse(req.body);
       
-      // Check if user name already exists
-      const existingUser = await storage.getUserByName(validatedData.name);
+      // Check if user login already exists
+      const existingUser = await storage.getUserByLogin(validatedData.login);
       if (existingUser) {
-        return res.status(400).json({ message: "Nome de usuário já existe" });
+        return res.status(400).json({ message: "Login já existe" });
       }
 
-      const user = await storage.createUser(validatedData);
-      res.status(201).json(user);
+      // Hash password before storing
+      const hashedPassword = await hashPassword(validatedData.password);
+      const userToCreate = {
+        ...validatedData,
+        password: hashedPassword
+      };
+
+      const user = await storage.createUser(userToCreate);
+      
+      // Don't send password in response
+      const { password, ...userWithoutPassword } = user;
+      res.status(201).json(userWithoutPassword);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
@@ -96,27 +117,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all status rastreio
-  app.get("/api/status-rastreio", async (req, res) => {
+  // Login endpoint
+  app.post("/api/login", (req, res, next) => {
     try {
-      const statusRastreios = await storage.getAllStatusRastreio();
-      res.json(statusRastreios);
+      const validatedData = loginSchema.parse(req.body);
+      
+      passport.authenticate("local", (err: any, user: any, info: any) => {
+        if (err) {
+          return next(err);
+        }
+        if (!user) {
+          return res.status(401).json({ message: "Login ou senha inválidos" });
+        }
+        
+        req.login(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          // Don't send password in response
+          const { password, ...userWithoutPassword } = user;
+          res.json(userWithoutPassword);
+        });
+      })(req, res, next);
     } catch (error) {
-      console.error("Error fetching status rastreio:", error);
-      res.status(500).json({ message: "Failed to fetch status rastreio" });
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      console.error("Error in login:", error);
+      res.status(500).json({ message: "Erro interno do servidor" });
     }
   });
 
-  // Get status rastreio by tracking code
-  app.get("/api/status-rastreio/:trackingCode", async (req, res) => {
-    try {
-      const { trackingCode } = req.params;
-      const statusRastreios = await storage.getStatusRastreioByTrackingCode(trackingCode);
-      res.json(statusRastreios);
-    } catch (error) {
-      console.error("Error fetching status rastreio:", error);
-      res.status(500).json({ message: "Failed to fetch status rastreio" });
+  // Logout endpoint
+  app.post("/api/logout", (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.sendStatus(200);
+    });
+  });
+
+  // Get current user
+  app.get("/api/user", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
     }
+    // Don't send password in response
+    const { password, ...userWithoutPassword } = req.user;
+    res.json(userWithoutPassword);
   });
 
   const httpServer = createServer(app);
