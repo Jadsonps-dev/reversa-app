@@ -244,11 +244,11 @@ export default function Finalization() {
   }
 
   return (
-    <div className="w-full space-y-6 px-2 sm:px-4 lg:px-6">
+    <div className="w-full max-w-full space-y-4 px-3 sm:px-4">
       {/* Tracking Management Section */}
-      <Card className="shadow-sm border border-border w-full">
+      <Card className="shadow-sm border border-border w-full max-w-full overflow-hidden">
         {/* Header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-border">
+        <div className="px-3 sm:px-4 py-3 border-b border-border">
           <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
             <div className="flex-shrink-0">
               <h2 className="text-lg sm:text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
@@ -302,7 +302,7 @@ export default function Finalization() {
         </div>
 
       {/* Filters */}
-      <div className="px-4 sm:px-6 py-4 bg-muted/30 border-b border-border">
+      <div className="px-3 sm:px-4 py-3 bg-muted/30 border-b border-border">
         <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 lg:items-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full lg:w-48" data-testid="select-status-filter">
@@ -336,36 +336,36 @@ export default function Finalization() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <Table className="w-full">
+      <div className="overflow-x-auto px-3 sm:px-4 pb-4">
+        <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[15%] min-w-[120px]">Rastreio</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px]">Data Recebido</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[13%] min-w-[110px]">Status</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px]">Data Finalização</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[8%] min-w-[80px]">Qtd Peças</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[20%] min-w-[150px]">Usuário</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[16%] min-w-[120px]">Ações</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[100px] px-2">Rastreio</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-2">Data Recebido</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[100px] px-2">Status</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-2">Data Finalização</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[8%] min-w-[70px] px-2">Qtd Peças</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[24%] min-w-[140px] px-2">Usuário</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[110px] px-2">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTrackings.map((tracking) => (
               <TableRow key={tracking.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell className="font-medium text-gray-900 text-xs sm:text-sm" data-testid={`cell-tracking-${tracking.id}`}>
-                  <div className="break-all max-w-[120px] overflow-hidden text-ellipsis">{tracking.trackingCode}</div>
+                <TableCell className="font-medium text-gray-900 text-xs sm:text-sm px-2 py-2" data-testid={`cell-tracking-${tracking.id}`}>
+                  <div className="break-all overflow-hidden text-ellipsis">{tracking.trackingCode}</div>
                 </TableCell>
-                <TableCell className="text-gray-800 text-xs sm:text-sm">
-                  <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-[130px]">{new Date(tracking.receivedAt).toLocaleString('pt-BR')}</div>
+                <TableCell className="text-gray-800 text-xs sm:text-sm px-2 py-2">
+                  <div className="whitespace-nowrap text-ellipsis overflow-hidden">{new Date(tracking.receivedAt).toLocaleString('pt-BR')}</div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-2 py-2">
                   <Select
                     value={String(getFieldValue(tracking, "status") || "PENDENTE")}
                     onValueChange={(value) => handleFieldChange(tracking.id, "status", value)}
                     disabled={!canEdit(tracking)}
                     data-testid={`select-status-${tracking.id}`}
                   >
-                    <SelectTrigger className={`w-full max-w-[110px] text-xs sm:text-sm ${
+                    <SelectTrigger className={`w-full text-xs sm:text-sm ${
                       !canEdit(tracking) 
                         ? (tracking.status === "TC_FINALIZADO" 
                           ? 'text-green-700 bg-green-50 border-green-200' 
@@ -385,9 +385,9 @@ export default function Finalization() {
                     </SelectContent>
                   </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-2 py-2">
                   {tracking.completedAt ? (
-                    <div className={`text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden max-w-[130px] ${
+                    <div className={`text-xs sm:text-sm whitespace-nowrap text-ellipsis overflow-hidden ${
                       tracking.status === "TC_FINALIZADO" ? "text-green-600" :
                       tracking.status === "CANCELADO" ? "text-red-600" :
                       tracking.status === "DIVERGENCIA" ? "text-orange-600" :
@@ -399,7 +399,7 @@ export default function Finalization() {
                     <div className="text-gray-700 text-xs sm:text-sm">-</div>
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell className="px-2 py-2">
                   <Input
                     type="number"
                     min={0}
@@ -410,14 +410,14 @@ export default function Finalization() {
                       const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
                       handleFieldChange(tracking.id, "quantity", numValue);
                     }}
-                    className={`w-full max-w-[80px] text-xs sm:text-sm ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`}
+                    className={`w-full text-xs sm:text-sm ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`}
                     placeholder="0"
                     disabled={!canEdit(tracking)}
                     data-testid={`input-quantity-${tracking.id}`}
                   />
                 </TableCell>
-                <TableCell>
-                  <div className="space-y-2 max-w-[150px]">
+                <TableCell className="px-2 py-2">
+                  <div className="space-y-2">
                     <Select
                       value={String(getFieldValue(tracking, "user") || "")}
                       onValueChange={(value) => {
@@ -489,8 +489,8 @@ export default function Finalization() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1 justify-center max-w-[120px]">
+                <TableCell className="px-2 py-2">
+                  <div className="flex flex-wrap gap-1 justify-center">
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
