@@ -79,7 +79,8 @@ export default function Entry() {
     createTrackingMutation.mutate({
       trackingCode: cleanedTrackingCode,
       statusTipo: statusTipo,
-      user: null // Pode ser modificado depois para incluir usuário logado
+      user: null, // Pode ser modificado depois para incluir usuário logado
+      empresa: "DEFAULT" // Valor padrão para empresa
     });
   };
 
