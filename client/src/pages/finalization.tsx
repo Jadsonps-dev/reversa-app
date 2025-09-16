@@ -31,6 +31,7 @@ export default function Finalization() {
   const queryClient = useQueryClient();
 
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("ALL"); // Novo filtro por tipo
   const [searchFilter, setSearchFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [editingValues, setEditingValues] = useState<Record<string, Partial<UpdateTracking>>>({});
@@ -114,15 +115,18 @@ export default function Finalization() {
   const filteredTrackings = useMemo(() => {
     return trackings.filter((tracking) => {
       const matchesStatus = statusFilter === "ALL" || (tracking.status || "PENDENTE") === statusFilter;
+      const matchesType = typeFilter === "ALL" || 
+        (typeFilter === "REVERSA" && (tracking.statusRastreio === "normal" || !tracking.statusRastreio)) ||
+        (typeFilter === "INSUCESSO" && tracking.statusRastreio === "insucesso");
       const matchesSearch = !searchFilter || tracking.trackingCode.toLowerCase().includes(searchFilter.toLowerCase());
       const matchesDate = !dateFilter || (() => {
         const date = new Date(tracking.receivedAt);
         const localYMD = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
         return localYMD === dateFilter;
       })();
-      return matchesStatus && matchesSearch && matchesDate;
+      return matchesStatus && matchesType && matchesSearch && matchesDate;
     });
-  }, [trackings, statusFilter, searchFilter, dateFilter]);
+  }, [trackings, statusFilter, typeFilter, searchFilter, dateFilter]);
 
   const handleFieldChange = (trackingId: string, field: keyof UpdateTracking, value: any) => {
     setEditingValues(prev => ({
@@ -238,6 +242,33 @@ export default function Finalization() {
               Atualizar
             </Button>
           </div>
+        </div>
+      </div>
+
+      {/* Type Filter Buttons */}
+      <div className="px-6 py-4 bg-blue-50/50 border-b border-border">
+        <div className="flex gap-4 justify-center">
+          <Button
+            variant={typeFilter === "ALL" ? "default" : "outline"}
+            onClick={() => setTypeFilter("ALL")}
+            className="px-6 py-2"
+          >
+            Todos
+          </Button>
+          <Button
+            variant={typeFilter === "REVERSA" ? "default" : "outline"}
+            onClick={() => setTypeFilter("REVERSA")}
+            className="px-6 py-2"
+          >
+            Reversa
+          </Button>
+          <Button
+            variant={typeFilter === "INSUCESSO" ? "default" : "outline"}
+            onClick={() => setTypeFilter("INSUCESSO")}
+            className="px-6 py-2"
+          >
+            Insucesso
+          </Button>
         </div>
       </div>
 

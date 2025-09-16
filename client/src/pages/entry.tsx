@@ -109,10 +109,7 @@ export default function Entry() {
             <Button
               type="button"
               variant={activeMode === "reversa" ? "default" : "outline"}
-              onClick={() => {
-                setActiveMode("reversa");
-                setLocation("/reversa"); // Navigate to Reversa page
-              }}
+              onClick={() => setActiveMode("reversa")}
               className="flex-1 py-3 text-base font-medium"
             >
               Reversa
