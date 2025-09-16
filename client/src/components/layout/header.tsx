@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { LogOut, Package } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import logoUrl from "@assets/logoluft_1758035573661.png";
 
 interface UserInfo {
   id: string;
@@ -67,8 +68,7 @@ export function Header() {
       }),
       time: date.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+        minute: '2-digit'
       })
     };
   };
@@ -77,15 +77,16 @@ export function Header() {
   const empresaName = userInfo?.empresa || 'Carregando...';
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 w-full">
       <div className="w-full px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo e Sistema */}
           <div className="flex items-center space-x-3">
-            {/* Placeholder para logo - substituir por logoluft.png quando disponível */}
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Package className="text-white text-xl" />
-            </div>
+            <img 
+              src={logoUrl} 
+              alt="Luft Logistics" 
+              className="h-10 w-auto"
+            />
             <h1 className="text-xl font-semibold text-gray-900">Sistema Reversa</h1>
           </div>
 
@@ -94,13 +95,13 @@ export function Header() {
             {/* Nome da Empresa */}
             <div className="text-center">
               <p className="text-sm text-gray-500">Empresa</p>
-              <p className="font-semibold text-gray-900">{empresaName}</p>
+              <p className="font-semibold text-gray-900" data-testid="text-empresa">{empresaName}</p>
             </div>
 
             {/* Data e Hora */}
             <div className="text-center">
               <p className="text-sm text-gray-500">Data/Hora</p>
-              <p className="font-semibold text-gray-900">{date} - {time}</p>
+              <p className="font-semibold text-gray-900" data-testid="text-datetime">{date} - {time}</p>
             </div>
           </div>
 

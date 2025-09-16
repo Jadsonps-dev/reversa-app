@@ -8,7 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building2, User, Lock } from "lucide-react";
+import { User, Lock } from "lucide-react";
+import logoUrl from "@assets/logoluft_1758035573661.png";
 
 const loginSchema = z.object({
   empresa: z.string().min(1, "Selecione uma empresa"),
@@ -74,8 +75,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <Card className="w-full max-w-md shadow-lg border border-border">
         <CardHeader className="text-center pb-6">
-          <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <Building2 className="text-white text-2xl" />
+          <div className="mx-auto mb-4">
+            <img 
+              src={logoUrl} 
+              alt="Luft Logistics" 
+              className="h-16 w-auto mx-auto"
+            />
           </div>
           <CardTitle className="text-2xl font-semibold text-foreground">
             Sistema de Rastreio
@@ -95,7 +100,7 @@ export default function Login() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Building2 size={16} />
+                      <img src={logoUrl} alt="Logo" className="w-4 h-4" />
                       Empresa
                     </FormLabel>
                     <FormControl>

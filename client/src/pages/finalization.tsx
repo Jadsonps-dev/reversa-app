@@ -218,9 +218,9 @@ export default function Finalization() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Tracking Management Section */}
-      <Card className="shadow-sm border border-border">
+      <Card className="shadow-sm border border-border w-full">
         {/* Header */}
         <div className="px-6 py-4 border-b border-border">
           <div className="flex justify-between items-center">
@@ -309,8 +309,8 @@ export default function Finalization() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <Table>
+      <div className="overflow-x-auto w-full">
+        <Table className="w-full">
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead className="text-gray-900 font-semibold">Rastreio</TableHead>

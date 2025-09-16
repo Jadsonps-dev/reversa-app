@@ -96,7 +96,7 @@ export default function Reports() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -260,13 +260,13 @@ export default function Reports() {
       </Card>
 
       {/* Data Table */}
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Dados Filtrados ({filteredData.length} registros)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
+          <div className="overflow-x-auto w-full">
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>Rastreio</TableHead>

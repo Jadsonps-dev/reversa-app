@@ -101,8 +101,9 @@ export default function Entry() {
     .slice(0, 5);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <Card className="shadow-sm border border-border p-8">
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-2xl">
+        <Card className="shadow-sm border border-border p-8">
         <CardContent className="pt-0">
           {/* Mode Selection Buttons */}
           <div className="flex gap-4 mb-8">
@@ -221,6 +222,7 @@ export default function Entry() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
