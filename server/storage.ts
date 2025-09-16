@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, trackings, users } from "@shared/schema";
+import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, trackings, users, statusRastreio, type InsertStatusRastreio, type StatusRastreio } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -7,13 +7,16 @@ export interface IStorage {
   getUserByName(name: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
-  
+
   // Tracking methods
   getAllTrackings(): Promise<Tracking[]>;
   getTrackingByCode(trackingCode: string): Promise<Tracking | undefined>;
   createTracking(tracking: InsertTracking): Promise<Tracking>;
   updateTracking(id: string, tracking: UpdateTracking): Promise<Tracking>;
   deleteTracking(id: string): Promise<void>;
+
+  // StatusRastreio methods
+  createStatusRastreio(status: InsertStatusRastreio): Promise<StatusRastreio>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -53,12 +56,20 @@ export class DatabaseStorage implements IStorage {
       .insert(trackings)
       .values(insertTracking)
       .returning();
+
+    // Create status_rastreio entry
+    await this.createStatusRastreio({
+      trackingId: tracking.id,
+      status: insertTracking.status,
+      createdAt: new Date(),
+    });
+
     return tracking;
   }
 
   async updateTracking(id: string, updateTracking: UpdateTracking): Promise<Tracking> {
     const updateData: any = { ...updateTracking };
-    
+
     // Auto-fill completion date when status is changed to something other than PENDENTE
     if (updateTracking.status && updateTracking.status !== "PENDENTE") {
       updateData.completedAt = new Date();
@@ -71,11 +82,29 @@ export class DatabaseStorage implements IStorage {
       .set(updateData)
       .where(eq(trackings.id, id))
       .returning();
+
+    // Update status_rastreio entry if status is changed
+    if (updateTracking.status && tracking.status !== updateTracking.status) {
+      await this.createStatusRastreio({
+        trackingId: id,
+        status: updateTracking.status,
+        createdAt: new Date(),
+      });
+    }
+
     return tracking;
   }
 
   async deleteTracking(id: string): Promise<void> {
     await db.delete(trackings).where(eq(trackings.id, id));
+  }
+
+  async createStatusRastreio(insertStatusRastreio: InsertStatusRastreio): Promise<StatusRastreio> {
+    const [statusRastreioEntry] = await db
+      .insert(statusRastreio)
+      .values(insertStatusRastreio)
+      .returning();
+    return statusRastreioEntry;
   }
 }
 

@@ -67,15 +67,19 @@ export default function Entry() {
 
   const onSubmit = (data: InsertTracking) => {
     if (!data.trackingCode.trim()) return;
-    
+
     // Remove tudo após o cifrão ($) se existir
     const cleanedTrackingCode = data.trackingCode.includes('$') 
       ? data.trackingCode.split('$')[0]
       : data.trackingCode;
-    
+
+    // Determina o statusTipo baseado no modo ativo
+    const statusTipo = activeMode === "reversa" ? "REVERSA" : "INSUCESSO";
+
     createTrackingMutation.mutate({
       ...data,
-      trackingCode: cleanedTrackingCode
+      trackingCode: cleanedTrackingCode,
+      statusTipo: statusTipo
     });
   };
 

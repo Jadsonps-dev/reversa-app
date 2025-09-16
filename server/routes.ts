@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTrackingSchema, updateTrackingSchema, insertUserSchema } from "@shared/schema";
+import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, insertStatusRastreioSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -24,6 +24,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Permitir códigos duplicados - removida validação de unicidade
 
       const tracking = await storage.createTracking(validatedData);
+      
+      // Se statusTipo foi fornecido, criar entrada na tabela status_rastreio
+      if (validatedData.statusTipo) {
+        await storage.createStatusRastreio({
+          trackingCode: tracking.trackingCode,
+          statusTipo: validatedData.statusTipo,
+          user: tracking.user || null,
+        });
+      }
+      
       res.status(201).json(tracking);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -93,6 +103,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating user:", error);
       res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  // Get all status rastreio
+  app.get("/api/status-rastreio", async (req, res) => {
+    try {
+      const statusRastreios = await storage.getAllStatusRastreio();
+      res.json(statusRastreios);
+    } catch (error) {
+      console.error("Error fetching status rastreio:", error);
+      res.status(500).json({ message: "Failed to fetch status rastreio" });
+    }
+  });
+
+  // Get status rastreio by tracking code
+  app.get("/api/status-rastreio/:trackingCode", async (req, res) => {
+    try {
+      const { trackingCode } = req.params;
+      const statusRastreios = await storage.getStatusRastreioByTrackingCode(trackingCode);
+      res.json(statusRastreios);
+    } catch (error) {
+      console.error("Error fetching status rastreio:", error);
+      res.status(500).json({ message: "Failed to fetch status rastreio" });
     }
   });
 

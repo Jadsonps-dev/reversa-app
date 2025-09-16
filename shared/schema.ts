@@ -18,12 +18,28 @@ export const trackings = pgTable("trackings", {
   user: text("user"),
 });
 
+export const statusRastreio = pgTable("status_rastreio", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  trackingCode: text("tracking_code").notNull(),
+  statusTipo: text("status_tipo", { enum: ["REVERSA", "INSUCESSO"] }).notNull(),
+  registradoEm: timestamp("registrado_em").notNull().default(sql`now()`),
+  user: text("user"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
 });
 
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
   trackingCode: true,
+}).extend({
+  statusTipo: z.enum(["REVERSA", "INSUCESSO"]).optional(),
+});
+
+export const insertStatusRastreioSchema = createInsertSchema(statusRastreio).pick({
+  trackingCode: true,
+  statusTipo: true,
+  user: true,
 });
 
 export const updateTrackingSchema = createInsertSchema(trackings).pick({
@@ -37,3 +53,5 @@ export type User = typeof users.$inferSelect;
 export type InsertTracking = z.infer<typeof insertTrackingSchema>;
 export type UpdateTracking = z.infer<typeof updateTrackingSchema>;
 export type Tracking = typeof trackings.$inferSelect;
+export type InsertStatusRastreio = z.infer<typeof insertStatusRastreioSchema>;
+export type StatusRastreio = typeof statusRastreio.$inferSelect;
