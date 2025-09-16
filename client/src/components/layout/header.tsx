@@ -88,38 +88,33 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
   return (
     <header className={`fixed top-0 right-0 z-50 bg-white border-b-2 border-blue-200 shadow-md transition-all duration-300 ${isCollapsed ? 'left-16' : 'left-64'}`}>
       <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-        {/* Logo */}
+        {/* Logo e Nome da Empresa */}
         <div className="flex items-center space-x-3 flex-shrink-0">
           <img 
             src={logoUrl} 
             alt="Luft Logistics" 
             className="h-10 w-auto"
           />
-          <h1 className="text-lg sm:text-xl font-bold text-gray-900 block lg:hidden">Sistema Reversa</h1>
-        </div>
-
-        {/* Área Central - Sistema Reversa destacado e centralizado */}
-        <div className="hidden lg:flex flex-1 justify-center">
-          <h1 className="text-2xl font-bold text-blue-700">Sistema Reversa</h1>
-        </div>
-
-        {/* Informações da direita */}
-        <div className="flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
-          {/* Nome da Empresa */}
-          <div className="hidden sm:block text-right">
+          <div className="text-left">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
             <p className="text-sm font-bold text-blue-700" data-testid="text-empresa">
               {empresaName}
             </p>
           </div>
+        </div>
 
-          {/* Data e Hora */}
-          <div className="hidden md:block text-right">
+        {/* Data e Hora - Centralizada */}
+        <div className="flex-1 flex justify-center">
+          <div className="text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Data/Hora</p>
             <p className="text-sm font-bold text-gray-900" data-testid="text-datetime">
               {date} - {time}
             </p>
           </div>
+        </div>
+
+        {/* Área da direita - apenas botão sair */}
+        <div className="flex items-center flex-shrink-0"></div_str>
 
           {/* Botão de Sair */}
           <Button
