@@ -145,11 +145,11 @@ function AppSidebar() {
 
 function AuthenticatedLayout() {
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen bg-gray-50">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <Header />
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <SidebarProvider>
+        <div className="flex min-h-screen pt-16">
+          <AppSidebar />
           <main className="flex-1 p-6 min-h-0">
             <Switch>
               <Route path="/" component={Entry} />
@@ -159,8 +159,8 @@ function AuthenticatedLayout() {
             </Switch>
           </main>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   );
 }
 
