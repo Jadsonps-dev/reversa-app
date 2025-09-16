@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,7 +50,7 @@ export default function AdminLogin() {
       if (response.ok) {
         const admin = await response.json();
         console.log("Login de admin bem-sucedido:", admin);
-        localStorage.setItem("authToken", admin.id || "authenticated");
+        localStorage.setItem("adminAuthToken", "admin-authenticated");
         window.location.href = "/admin";
       } else {
         const errorData = await response.json();
@@ -152,8 +151,8 @@ export default function AdminLogin() {
 
           {/* Link para voltar ao login normal */}
           <div className="text-center mt-4">
-            <a 
-              href="/login" 
+            <a
+              href="/login"
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               Voltar ao login normal

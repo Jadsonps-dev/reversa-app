@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, BarChart3, Building2, Calendar, FileText, Home, LogOut, Package, Settings, Shield, Trash2, TrendingUp, UserCog, UserPlus, Users, Users2 } from "lucide-react";
+import { AlertTriangle, BarChart3, Building2, Calendar, FileText, Home, LogOut, Package, Plus, RefreshCw, Settings, Shield, Trash2, TrendingUp, UserCog, UserPlus, Users, Users2 } from "lucide-react";
 import type { User, InsertUser, Tracking } from "@shared/schema";
 
 const empresas = [

@@ -7,9 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Entry from "@/pages/entry";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
-import Admin from "@/pages/admin";
 import Login from "@/pages/login";
-import AdminLogin from "@/pages/admin-login";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -162,7 +160,6 @@ function AuthenticatedLayout() {
               <Route path="/" component={Entry} />
               <Route path="/finalization" component={Finalization} />
               <Route path="/reports" component={Reports} />
-              <Route path="/admin" component={Admin} />
               <Route component={NotFound} />
             </Switch>
           </main>
@@ -185,7 +182,6 @@ function App() {
             ) : (
               <Switch>
                 <Route path="/login" component={Login} />
-                <Route path="/admin-login" component={AdminLogin} />
                 <Route>
                   {() => {
                     window.location.href = "/login";
