@@ -77,9 +77,9 @@ export default function Entry() {
     const statusTipo = activeMode === "reversa" ? "REVERSA" : "INSUCESSO";
 
     createTrackingMutation.mutate({
-      ...data,
       trackingCode: cleanedTrackingCode,
-      statusTipo: statusTipo
+      statusTipo: statusTipo,
+      user: null // Pode ser modificado depois para incluir usuário logado
     });
   };
 
