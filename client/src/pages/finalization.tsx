@@ -341,13 +341,13 @@ export default function Finalization() {
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[15%] min-w-[120px] px-3">Rastreio</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px] px-3">Data Recebido</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[12%] min-w-[110px] px-3">Status</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[130px] px-3">Data Finalização</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[14%] min-w-[120px] px-3">Rastreio</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[13%] min-w-[130px] px-3">Data Recebido</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[16%] min-w-[140px] px-3">Status</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[13%] min-w-[130px] px-3">Data Finalização</TableHead>
               <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[9%] min-w-[80px] px-3">Qtd Peças</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[120px] px-3">Usuário</TableHead>
-              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[18%] min-w-[120px] px-3">Ações</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[20%] min-w-[140px] px-3">Usuário</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm w-[15%] min-w-[100px] px-3 text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -490,8 +490,8 @@ export default function Finalization() {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="px-3 py-2">
-                  <div className="flex flex-wrap gap-1 justify-center">
+                <TableCell className="px-2 py-2">
+                  <div className="flex flex-col items-center gap-0.5">
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
@@ -499,10 +499,10 @@ export default function Finalization() {
                       onClick={() => handleSave(tracking.id)}
                       disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || !canEdit(tracking)}
                       title="Confirmar alterações"
-                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400 p-1.5"
+                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400 p-1 h-6 w-6"
                       data-testid={`button-confirm-${tracking.id}`}
                     >
-                      <Check size={14} />
+                      <Check size={12} />
                     </Button>
 
                     {/* Editar - Lápis (só para status não-PENDENTE) */}
@@ -512,10 +512,10 @@ export default function Finalization() {
                         size="sm"
                         onClick={() => handleEdit(tracking.id, tracking)}
                         title="Editar"
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 h-6 w-6"
                         data-testid={`button-edit-${tracking.id}`}
                       >
-                        <Edit3 size={14} />
+                        <Edit3 size={12} />
                       </Button>
                     )}
 
@@ -533,10 +533,10 @@ export default function Finalization() {
                           onClick={() => handleDelete(tracking.id)}
                           disabled={deleteTrackingMutation.isPending}
                           title="Excluir rastreio"
-                          className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400 p-1.5"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400 p-1 h-6 w-6"
                           data-testid={`button-delete-${tracking.id}`}
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={12} />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
