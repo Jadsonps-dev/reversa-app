@@ -114,7 +114,7 @@ export function Header({ isCollapsed }: { isCollapsed: boolean }) {
         </div>
 
         {/* Área da direita - apenas botão sair */}
-        <div className="flex items-center flex-shrink-0"></div_str>
+        <div className="flex items-center flex-shrink-0">
 
           {/* Botão de Sair */}
           <Button
