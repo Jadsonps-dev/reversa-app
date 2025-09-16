@@ -52,6 +52,8 @@ export default function Login() {
       if (response.ok) {
         const user = await response.json();
         console.log("Login bem-sucedido:", user);
+        // Salvar o token de autenticação no localStorage
+        localStorage.setItem("authToken", user.id || "authenticated");
         // Redirecionar para a página principal após login bem-sucedido
         window.location.href = "/";
       } else {
