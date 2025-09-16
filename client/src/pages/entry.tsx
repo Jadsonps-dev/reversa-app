@@ -89,7 +89,16 @@ export default function Entry() {
     inputRef.current?.focus();
   }, []);
 
-  const recentEntries = recentTrackings.slice(0, 5);
+  // Filter recent entries by statusRastreio based on active mode
+  const recentEntries = recentTrackings
+    .filter(tracking => {
+      if (activeMode === "reversa") {
+        return tracking.statusRastreio === "normal";
+      } else {
+        return tracking.statusRastreio === "insucesso";
+      }
+    })
+    .slice(0, 5);
 
   return (
     <div className="max-w-2xl mx-auto">

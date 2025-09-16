@@ -10,8 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Barcode, Save, Check, ArrowLeft } from "lucide-react";
-import { Link } from "wouter";
+import { Barcode, Save, Check } from "lucide-react";
 import type { Tracking, InsertTracking } from "@shared/schema";
 
 export default function Reversa() {
@@ -73,8 +72,10 @@ export default function Reversa() {
       : data.trackingCode;
     
     createTrackingMutation.mutate({
-      ...data,
-      trackingCode: cleanedTrackingCode
+      trackingCode: cleanedTrackingCode,
+      statusRastreio: "normal",
+      user: null,
+      empresa: "DEFAULT"
     });
   };
 
@@ -83,19 +84,13 @@ export default function Reversa() {
     inputRef.current?.focus();
   }, []);
 
-  const recentEntries = recentTrackings.slice(0, 5);
+  // Filter recent entries for reversa only (statusRastreio = "normal")
+  const recentEntries = recentTrackings
+    .filter(tracking => tracking.statusRastreio === "normal")
+    .slice(0, 5);
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-4">
-        <Link href="/">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="mr-2" size={16} />
-            Voltar
-          </Button>
-        </Link>
-      </div>
-      
       <Card className="shadow-sm border border-border p-8">
         <CardContent className="pt-0">
           <div className="text-center mb-8">
