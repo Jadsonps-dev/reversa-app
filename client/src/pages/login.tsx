@@ -74,8 +74,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <Card className="w-full max-w-md shadow-lg border border-border">
         <CardHeader className="text-center pb-6">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Building2 className="text-primary text-2xl" />
+          <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Building2 className="text-white text-2xl" />
           </div>
           <CardTitle className="text-2xl font-semibold text-foreground">
             Sistema de Rastreio

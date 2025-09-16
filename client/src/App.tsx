@@ -13,6 +13,7 @@ import NotFound from "@/pages/not-found";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { LogOut, FileInput, CheckSquare, BarChart3, Menu } from "lucide-react";
+import { Header } from "@/components/layout/header";
 import { useState, useEffect } from "react";
 
 function AppSidebar() {
@@ -22,9 +23,20 @@ function AppSidebar() {
     return saved ? JSON.parse(saved) : false;
   });
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setLocation("/login");
+  const handleLogout = async () => {
+    try {
+      // Logout no servidor
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Erro no logout:', error);
+    } finally {
+      // Sempre limpar estado local
+      localStorage.removeItem("authToken");
+      setLocation("/login");
+    }
   };
 
   const handleNavigation = (path: string) => {
@@ -134,22 +146,25 @@ function AppSidebar() {
 function AuthenticatedLayout() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
-        <AppSidebar />
-        <SidebarInset className="flex-1">
-          <main className="p-8 max-w-7xl mx-auto w-full">
-            <div className="flex justify-center">
-              <div className="w-full max-w-4xl">
-                <Switch>
-                  <Route path="/" component={Entry} />
-                  <Route path="/finalization" component={Finalization} />
-                  <Route path="/reports" component={Reports} />
-                  <Route component={NotFound} />
-                </Switch>
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <div className="flex flex-1">
+          <AppSidebar />
+          <SidebarInset className="flex-1">
+            <main className="p-8 max-w-7xl mx-auto w-full">
+              <div className="flex justify-center">
+                <div className="w-full max-w-4xl">
+                  <Switch>
+                    <Route path="/" component={Entry} />
+                    <Route path="/finalization" component={Finalization} />
+                    <Route path="/reports" component={Reports} />
+                    <Route component={NotFound} />
+                  </Switch>
+                </div>
               </div>
-            </div>
-          </main>
-        </SidebarInset>
+            </main>
+          </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );
