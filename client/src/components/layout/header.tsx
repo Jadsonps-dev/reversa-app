@@ -77,7 +77,7 @@ export function Header() {
   const empresaName = userInfo?.empresa || 'Carregando...';
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 w-full">
+    <header className="bg-white border-b border-gray-200 shadow-sm w-full">
       <div className="w-full px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo e Sistema */}
