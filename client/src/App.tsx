@@ -1,3 +1,4 @@
+
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,38 +11,27 @@ import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
 import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
-import { BrowserRouter, Routes, Route as ReactRoute, Navigate, useNavigate } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { LogOut, FileInput, CheckSquare, BarChart3 } from "lucide-react";
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/login" component={Login} />
-      <Route path="/" component={Entry} />
-      <Route path="/reversa" component={Reversa} />
-      <Route path="/finalization" component={Finalization} />
-      <Route path="/reports" component={Reports} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
 function AppSidebar() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [location, setLocation] = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    navigate("/login");
+    setLocation("/login");
+  };
+
+  const handleNavigation = (path: string) => {
+    setLocation(path);
   };
 
   const menuItems = [
     {
       title: "Entrada",
       icon: FileInput,
-      path: "/entry",
+      path: "/",
     },
     {
       title: "Finalização",
@@ -71,8 +61,8 @@ function AppSidebar() {
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.path}>
               <SidebarMenuButton
-                onClick={() => navigate(item.path)}
-                isActive={location.pathname === item.path}
+                onClick={() => handleNavigation(item.path)}
+                isActive={location === item.path}
                 className="w-full justify-start"
               >
                 <item.icon className="mr-2 h-4 w-4" />
@@ -104,21 +94,19 @@ function AuthenticatedLayout() {
         <AppSidebar />
         <SidebarInset className="flex-1">
           <main className="p-6">
-            <Routes>
-              <Route path="/" element={<Navigate to="/entry" />} />
-              <Route path="/entry" element={<Entry />} />
-              <Route path="/reversa" element={<Reversa />} />
-              <Route path="/finalization" element={<Finalization />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Switch>
+              <Route path="/" component={Entry} />
+              <Route path="/reversa" component={Reversa} />
+              <Route path="/finalization" component={Finalization} />
+              <Route path="/reports" component={Reports} />
+              <Route component={NotFound} />
+            </Switch>
           </main>
         </SidebarInset>
       </div>
     </SidebarProvider>
   );
 }
-
 
 function App() {
   const isAuthenticated = localStorage.getItem("authToken");
@@ -130,9 +118,7 @@ function App() {
           {!isAuthenticated && <Header />}
           <main className={isAuthenticated ? "" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
             {isAuthenticated ? (
-              <BrowserRouter>
-                 <AuthenticatedLayout />
-              </BrowserRouter>
+              <AuthenticatedLayout />
             ) : (
               <Switch>
                 <Route path="/login" component={Login} />
