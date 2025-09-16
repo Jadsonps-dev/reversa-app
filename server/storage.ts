@@ -54,9 +54,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTracking(insertTracking: InsertTracking): Promise<Tracking> {
+    const trackingData = {
+      ...insertTracking,
+      empresa: insertTracking.empresa || "DEFAULT"
+    };
+    
     const [tracking] = await db
       .insert(trackings)
-      .values(insertTracking)
+      .values(trackingData)
       .returning();
 
     // Create status_rastreio entry if statusTipo is provided

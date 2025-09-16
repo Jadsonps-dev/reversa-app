@@ -34,9 +34,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
   trackingCode: true,
   user: true,
-  empresa: true,
 }).extend({
   statusTipo: z.enum(["REVERSA", "INSUCESSO"]).optional(),
+  empresa: z.string().default("DEFAULT").optional(),
 });
 
 export const insertStatusRastreioSchema = createInsertSchema(statusRastreio).pick({
