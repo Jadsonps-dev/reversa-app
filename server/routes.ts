@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, loginSchema, insertNameSchema } from "@shared/schema";
+import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, loginSchema, adminLoginSchema, insertNameSchema } from "@shared/schema";
 import { setupAuth, hashPassword } from "./auth";
 import passport from "passport";
 import { z } from "zod";
@@ -158,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin login endpoint
   app.post("/api/admin-login", (req, res, next) => {
     try {
-      const validatedData = loginSchema.parse(req.body);
+      const validatedData = adminLoginSchema.parse(req.body);
       
       passport.authenticate("local", (err: any, user: any, info: any) => {
         if (err) {

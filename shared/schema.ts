@@ -42,6 +42,11 @@ export const loginSchema = z.object({
   senha: z.string().min(1, "Senha é obrigatória"),
 });
 
+export const adminLoginSchema = z.object({
+  login: z.string().min(1, "Login é obrigatório"),
+  senha: z.string().min(1, "Senha é obrigatória"),
+});
+
 export const insertTrackingSchema = createInsertSchema(trackings).pick({
   trackingCode: true,
   user: true,

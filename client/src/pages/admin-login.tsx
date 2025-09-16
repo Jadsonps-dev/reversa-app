@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { User, Lock, Shield } from "lucide-react";
 import logoUrl from "@assets/logoluft_1758035573661.png";
 
@@ -25,6 +26,7 @@ type AdminLoginForm = z.infer<typeof adminLoginSchema>;
 
 export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<AdminLoginForm>({
     resolver: zodResolver(adminLoginSchema),
@@ -55,11 +57,19 @@ export default function AdminLogin() {
       } else {
         const errorData = await response.json();
         console.error("Erro no login do admin:", errorData.message);
-        alert(errorData.message || "Erro no login do admin");
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: errorData.message || "Login ou senha incorretos. Tente novamente.",
+        });
       }
     } catch (error) {
       console.error("Erro no login do admin:", error);
-      alert("Erro de conexão. Tente novamente.");
+      toast({
+        variant: "destructive",
+        title: "Erro de conexão",
+        description: "Não foi possível conectar ao servidor. Tente novamente.",
+      });
     } finally {
       setIsLoading(false);
     }
