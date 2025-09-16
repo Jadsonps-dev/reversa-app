@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/layout/header";
 import Entry from "@/pages/entry";
-import Reversa from "@/pages/reversa";
 import Finalization from "@/pages/finalization";
 import Reports from "@/pages/reports";
 import Login from "@/pages/login";
@@ -97,7 +96,6 @@ function AuthenticatedLayout() {
           <main className="p-6">
             <Switch>
               <Route path="/" component={Entry} />
-              <Route path="/reversa" component={Reversa} />
               <Route path="/finalization" component={Finalization} />
               <Route path="/reports" component={Reports} />
               <Route component={NotFound} />
@@ -116,8 +114,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen bg-background">
-          {!isAuthenticated && <Header />}
-          <main className={isAuthenticated ? "" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
+          <main className={isAuthenticated ? "" : ""}>
             {isAuthenticated ? (
               <AuthenticatedLayout />
             ) : (
