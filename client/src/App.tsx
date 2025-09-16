@@ -110,7 +110,7 @@ function AuthenticatedLayout() {
 }
 
 function App() {
-  const isAuthenticated = localStorage.getItem("authToken");
+  const isAuthenticated = !!localStorage.getItem("authToken");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -123,7 +123,12 @@ function App() {
             ) : (
               <Switch>
                 <Route path="/login" component={Login} />
-                <Route component={NotFound} />
+                <Route>
+                  {() => {
+                    window.location.href = "/login";
+                    return <Login />;
+                  }}
+                </Route>
               </Switch>
             )}
           </main>
