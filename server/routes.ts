@@ -24,16 +24,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Permitir códigos duplicados - removida validação de unicidade
 
       const tracking = await storage.createTracking(validatedData);
-      
-      // Se statusTipo foi fornecido, criar entrada na tabela status_rastreio
-      if (validatedData.statusTipo) {
-        await storage.createStatusRastreio({
-          trackingCode: tracking.trackingCode,
-          statusTipo: validatedData.statusTipo,
-          user: tracking.user || null,
-        });
-      }
-      
       res.status(201).json(tracking);
     } catch (error) {
       if (error instanceof z.ZodError) {

@@ -17,6 +17,8 @@ export interface IStorage {
 
   // StatusRastreio methods
   createStatusRastreio(status: InsertStatusRastreio): Promise<StatusRastreio>;
+  getAllStatusRastreio(): Promise<StatusRastreio[]>;
+  getStatusRastreioByTrackingCode(trackingCode: string): Promise<StatusRastreio[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -57,12 +59,14 @@ export class DatabaseStorage implements IStorage {
       .values(insertTracking)
       .returning();
 
-    // Create status_rastreio entry
-    await this.createStatusRastreio({
-      trackingId: tracking.id,
-      status: insertTracking.status,
-      createdAt: new Date(),
-    });
+    // Create status_rastreio entry if statusTipo is provided
+    if (insertTracking.statusTipo) {
+      await this.createStatusRastreio({
+        trackingCode: tracking.trackingCode,
+        statusTipo: insertTracking.statusTipo,
+        user: tracking.user || null,
+      });
+    }
 
     return tracking;
   }
@@ -105,6 +109,14 @@ export class DatabaseStorage implements IStorage {
       .values(insertStatusRastreio)
       .returning();
     return statusRastreioEntry;
+  }
+
+  async getAllStatusRastreio(): Promise<StatusRastreio[]> {
+    return await db.select().from(statusRastreio).orderBy(desc(statusRastreio.registradoEm));
+  }
+
+  async getStatusRastreioByTrackingCode(trackingCode: string): Promise<StatusRastreio[]> {
+    return await db.select().from(statusRastreio).where(eq(statusRastreio.trackingCode, trackingCode));
   }
 }
 
