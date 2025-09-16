@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { RefreshCw, Save, Trash2, Users, Plus, Edit3, Check } from "lucide-react";
 import type { Tracking, UpdateTracking, User, InsertUser, Name, InsertName } from "@shared/schema";
 
@@ -39,6 +40,8 @@ export default function Finalization() {
   const [showUserForm, setShowUserForm] = useState(false);
   const [editingStates, setEditingStates] = useState<Record<string, boolean>>({});
   const [confirmedStates, setConfirmedStates] = useState<Record<string, boolean>>({}); // Estado para rastrear itens confirmados
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [trackingToDelete, setTrackingToDelete] = useState<string | null>(null);
 
   const { data: trackings = [], isLoading, refetch } = useQuery<Tracking[]>({
     queryKey: ["/api/trackings"],
@@ -197,8 +200,15 @@ export default function Finalization() {
   };
 
   const handleDelete = (trackingId: string) => {
-    if (window.confirm("Tem certeza que deseja remover este rastreio?")) {
-      deleteTrackingMutation.mutate(trackingId);
+    setTrackingToDelete(trackingId);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (trackingToDelete) {
+      deleteTrackingMutation.mutate(trackingToDelete);
+      setDeleteDialogOpen(false);
+      setTrackingToDelete(null);
     }
   };
 
@@ -504,17 +514,44 @@ export default function Finalization() {
                     )}
 
                     {/* Excluir - Lixeira */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(tracking.id)}
-                      disabled={deleteTrackingMutation.isPending}
-                      title="Excluir rastreio"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400"
-                      data-testid={`button-delete-${tracking.id}`}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
+                    <AlertDialog open={deleteDialogOpen && trackingToDelete === tracking.id} onOpenChange={(open) => {
+                      if (!open) {
+                        setDeleteDialogOpen(false);
+                        setTrackingToDelete(null);
+                      }
+                    }}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(tracking.id)}
+                          disabled={deleteTrackingMutation.isPending}
+                          title="Excluir rastreio"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400"
+                          data-testid={`button-delete-${tracking.id}`}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Tem certeza que deseja remover o rastreio <strong>{tracking.trackingCode}</strong>? 
+                            Esta ação não pode ser desfeita.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={confirmDelete}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Excluir
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </TableCell>
               </TableRow>
