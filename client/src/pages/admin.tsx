@@ -12,8 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Users, Plus, UserPlus, RefreshCw } from "lucide-react";
-import type { User, InsertUser } from "@shared/schema";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertTriangle, BarChart3, Building2, Calendar, FileText, Home, LogOut, Package, Settings, Shield, Trash2, TrendingUp, UserCog, UserPlus, Users, Users2 } from "lucide-react";
+import type { User, InsertUser, Tracking } from "@shared/schema";
 
 const empresas = [
   { value: "insider", label: "Insider" },
@@ -25,6 +28,8 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const form = useForm<InsertUser>({
     resolver: zodResolver(insertUserSchema),
@@ -39,6 +44,11 @@ export default function Admin() {
   // Fetch all users
   const { data: users = [], isLoading, refetch } = useQuery<User[]>({
     queryKey: ["/api/users"],
+  });
+
+  // Fetch all trackings for statistics
+  const { data: trackings = [] } = useQuery<Tracking[]>({
+    queryKey: ["/api/trackings"],
   });
 
   const createUserMutation = useMutation({
@@ -59,6 +69,28 @@ export default function Admin() {
       toast({
         title: "Erro",
         description: error.message || "Erro ao criar usuário",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiRequest("DELETE", `/api/users/${userId}`);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setUserToDelete(null);
+      toast({
+        title: "Sucesso!",
+        description: "Usuário removido com sucesso.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao remover usuário",
         variant: "destructive",
       });
     },
