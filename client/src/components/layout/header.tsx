@@ -114,6 +114,7 @@ export function Header() {
           <LogOut className="h-4 w-4" />
           <span>Sair</span>
         </Button>
+      </div>
     </header>
   );
 }
