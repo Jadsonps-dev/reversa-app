@@ -248,19 +248,19 @@ export default function Finalization() {
       {/* Tracking Management Section */}
       <Card className="shadow-sm border border-border w-full max-w-none">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border">
-          <div className="flex justify-between items-center">
+        <div className="px-3 sm:px-6 py-4 border-b border-border">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
-              <p className="text-sm text-gray-700 mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Finalização de Rastreios</h2>
+              <p className="text-xs sm:text-sm text-gray-700 mt-1">Gerencie e finalize os códigos de rastreio recebidos</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               {/* Type Filter Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <Button
                   variant={typeFilter === "ALL" ? "default" : "outline"}
                   onClick={() => setTypeFilter("ALL")}
-                  className="px-4 py-2"
+                  className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                   size="sm"
                 >
                   Todos
@@ -268,7 +268,7 @@ export default function Finalization() {
                 <Button
                   variant={typeFilter === "REVERSA" ? "default" : "outline"}
                   onClick={() => setTypeFilter("REVERSA")}
-                  className="px-4 py-2"
+                  className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                   size="sm"
                 >
                   Reversa
@@ -276,24 +276,27 @@ export default function Finalization() {
                 <Button
                   variant={typeFilter === "INSUCESSO" ? "default" : "outline"}
                   onClick={() => setTypeFilter("INSUCESSO")}
-                  className="px-4 py-2"
+                  className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
                   size="sm"
                 >
                   Insucesso
                 </Button>
               </div>
-              <div className="text-sm text-gray-700">
-                Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
+              <div className="flex items-center justify-between sm:justify-start gap-4">
+                <div className="text-xs sm:text-sm text-gray-700">
+                  Total: <span className="font-medium text-foreground">{filteredTrackings.length}</span> rastreios
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => refetch()}
+                  data-testid="button-refresh"
+                  className="px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm"
+                >
+                  <RefreshCw className="mr-1 sm:mr-2" size={14} />
+                  <span className="hidden sm:inline">Atualizar</span>
+                </Button>
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => refetch()}
-                data-testid="button-refresh"
-              >
-                <RefreshCw className="mr-2" size={16} />
-                Atualizar
-              </Button>
             </div>
           </div>
         </div>
@@ -301,10 +304,10 @@ export default function Finalization() {
       
 
       {/* Filters */}
-      <div className="px-6 py-4 bg-muted/30 border-b border-border">
-        <div className="flex flex-wrap gap-4 items-center">
+      <div className="px-3 sm:px-6 py-4 bg-muted/30 border-b border-border">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48" data-testid="select-status-filter">
+            <SelectTrigger className="w-full sm:w-48" data-testid="select-status-filter">
               <SelectValue placeholder="Todos os Status" />
             </SelectTrigger>
             <SelectContent>
@@ -320,7 +323,7 @@ export default function Finalization() {
             placeholder="Buscar rastreio..."
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="w-64"
+            className="w-full sm:w-64"
             data-testid="input-search-filter"
           />
 
@@ -328,7 +331,7 @@ export default function Finalization() {
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="w-48"
+            className="w-full sm:w-48"
             data-testid="input-date-filter"
           />
         </div>
@@ -336,26 +339,26 @@ export default function Finalization() {
 
       {/* Table */}
       <div className="overflow-x-auto w-full">
-        <Table className="w-full">
+        <Table className="w-full min-w-[800px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="text-gray-900 font-semibold">Rastreio</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Data Recebido</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Status</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Data Finalização</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Qtd Peças</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Usuário</TableHead>
-              <TableHead className="text-gray-900 font-semibold">Ações</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[120px]">Rastreio</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[140px]">Data Recebido</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[120px]">Status</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[140px]">Data Finalização</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[80px]">Qtd Peças</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[140px]">Usuário</TableHead>
+              <TableHead className="text-gray-900 font-semibold text-xs sm:text-sm min-w-[100px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTrackings.map((tracking) => (
               <TableRow key={tracking.id} className="hover:bg-muted/50 transition-colors">
-                <TableCell className="font-medium text-gray-900" data-testid={`cell-tracking-${tracking.id}`}>
-                  {tracking.trackingCode}
+                <TableCell className="font-medium text-gray-900 text-xs sm:text-sm" data-testid={`cell-tracking-${tracking.id}`}>
+                  <div className="break-all">{tracking.trackingCode}</div>
                 </TableCell>
-                <TableCell className="text-gray-800">
-                  {new Date(tracking.receivedAt).toLocaleString('pt-BR')}
+                <TableCell className="text-gray-800 text-xs sm:text-sm">
+                  <div className="whitespace-nowrap">{new Date(tracking.receivedAt).toLocaleString('pt-BR')}</div>
                 </TableCell>
                 <TableCell>
                   <Select
@@ -364,7 +367,7 @@ export default function Finalization() {
                     disabled={!canEdit(tracking)}
                     data-testid={`select-status-${tracking.id}`}
                   >
-                    <SelectTrigger className={`w-36 ${
+                    <SelectTrigger className={`w-28 sm:w-36 text-xs sm:text-sm ${
                       !canEdit(tracking) 
                         ? (tracking.status === "TC_FINALIZADO" 
                           ? 'text-green-700 bg-green-50 border-green-200' 
@@ -386,16 +389,16 @@ export default function Finalization() {
                 </TableCell>
                 <TableCell>
                   {tracking.completedAt ? (
-                    <div className={
+                    <div className={`text-xs sm:text-sm whitespace-nowrap ${
                       tracking.status === "TC_FINALIZADO" ? "text-green-600" :
                       tracking.status === "CANCELADO" ? "text-red-600" :
                       tracking.status === "DIVERGENCIA" ? "text-orange-600" :
                       "text-gray-700"
-                    }>
+                    }`}>
                       {new Date(tracking.completedAt).toLocaleString('pt-BR')}
                     </div>
                   ) : (
-                    <div className="text-gray-700">-</div>
+                    <div className="text-gray-700 text-xs sm:text-sm">-</div>
                   )}
                 </TableCell>
                 <TableCell>
@@ -409,7 +412,7 @@ export default function Finalization() {
                       const numValue = value === "" ? null : Number.isNaN(Number(value)) ? null : Number(value);
                       handleFieldChange(tracking.id, "quantity", numValue);
                     }}
-                    className={`w-20 ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`}
+                    className={`w-16 sm:w-20 text-xs sm:text-sm ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`}
                     placeholder="0"
                     disabled={!canEdit(tracking)}
                     data-testid={`input-quantity-${tracking.id}`}
@@ -429,7 +432,7 @@ export default function Finalization() {
                       }}
                       disabled={!canEdit(tracking)}
                     >
-                      <SelectTrigger className={`w-full ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`} data-testid={`select-user-${tracking.id}`}>
+                      <SelectTrigger className={`w-full text-xs sm:text-sm ${!canEdit(tracking) ? 'text-gray-600 bg-gray-200 border-gray-300' : ''}`} data-testid={`select-user-${tracking.id}`}>
                         <SelectValue placeholder="Selecionar usuário" />
                       </SelectTrigger>
                       <SelectContent>
@@ -485,7 +488,7 @@ export default function Finalization() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex space-x-1">
+                  <div className="flex space-x-0.5 sm:space-x-1">
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
@@ -493,10 +496,10 @@ export default function Finalization() {
                       onClick={() => handleSave(tracking.id)}
                       disabled={updateTrackingMutation.isPending || !editingValues[tracking.id] || !canEdit(tracking)}
                       title="Confirmar alterações"
-                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400"
+                      className="text-green-600 hover:text-green-800 hover:bg-green-50 disabled:text-gray-400 p-1 sm:p-2"
                       data-testid={`button-confirm-${tracking.id}`}
                     >
-                      <Check size={16} />
+                      <Check size={14} />
                     </Button>
 
                     {/* Editar - Lápis (só para status não-PENDENTE) */}
@@ -506,10 +509,10 @@ export default function Finalization() {
                         size="sm"
                         onClick={() => handleEdit(tracking.id, tracking)}
                         title="Editar"
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1 sm:p-2"
                         data-testid={`button-edit-${tracking.id}`}
                       >
-                        <Edit3 size={16} />
+                        <Edit3 size={14} />
                       </Button>
                     )}
 
@@ -527,10 +530,10 @@ export default function Finalization() {
                           onClick={() => handleDelete(tracking.id)}
                           disabled={deleteTrackingMutation.isPending}
                           title="Excluir rastreio"
-                          className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 disabled:text-gray-400 p-1 sm:p-2"
                           data-testid={`button-delete-${tracking.id}`}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

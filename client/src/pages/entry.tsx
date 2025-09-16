@@ -101,17 +101,17 @@ export default function Entry() {
     .slice(0, 5);
 
   return (
-    <div className="min-h-full flex items-center justify-center pt-8">
-      <div className="w-full max-w-2xl mx-auto px-4">
+    <div className="min-h-full flex items-center justify-center pt-4 sm:pt-8">
+      <div className="w-full max-w-2xl mx-auto px-2 sm:px-4">
         <Card className="shadow-lg border border-border">
-        <CardContent className="p-8">
+        <CardContent className="p-4 sm:p-8">
           {/* Mode Selection Buttons */}
-          <div className="flex gap-4 mb-8">
+          <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8">
             <Button
               type="button"
               variant={activeMode === "reversa" ? "default" : "outline"}
               onClick={() => setActiveMode("reversa")}
-              className="flex-1 py-3 text-base font-medium"
+              className="flex-1 py-2 sm:py-3 text-sm sm:text-base font-medium"
             >
               Reversa
             </Button>
@@ -119,20 +119,20 @@ export default function Entry() {
               type="button"
               variant={activeMode === "insucesso" ? "default" : "outline"}
               onClick={() => setActiveMode("insucesso")}
-              className="flex-1 py-3 text-base font-medium"
+              className="flex-1 py-2 sm:py-3 text-sm sm:text-base font-medium"
             >
               Insucesso
             </Button>
           </div>
 
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Barcode className="text-primary text-3xl" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <Barcode className="text-primary text-2xl sm:text-3xl" />
             </div>
-            <h2 className="text-2xl font-semibold text-foreground mb-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
               {activeMode === "reversa" ? "Escaneamento de Rastreio" : "Registro de Insucesso"}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground px-2">
               {activeMode === "reversa" 
                 ? "Escaneie ou digite o código de rastreio para registrar a entrada"
                 : "Escaneie ou digite o código de rastreio para registrar o insucesso"
@@ -157,7 +157,7 @@ export default function Entry() {
                             ? "Escaneie ou digite o código de rastreio"
                             : "Escaneie ou digite o código para insucesso"
                         }
-                        className="text-lg min-h-12"
+                        className="text-base sm:text-lg min-h-10 sm:min-h-12"
                         autoComplete="off"
                         data-testid="input-tracking-code"
                       />
@@ -169,7 +169,7 @@ export default function Entry() {
 
               <Button 
                 type="submit" 
-                className="w-full py-3 text-base font-medium"
+                className="w-full py-2 sm:py-3 text-sm sm:text-base font-medium"
                 disabled={createTrackingMutation.isPending}
                 data-testid="button-submit-tracking"
               >
@@ -199,22 +199,22 @@ export default function Entry() {
           )}
 
           {recentEntries.length > 0 && (
-            <div className="mt-8 pt-6 border-t border-border">
-              <h3 className="text-lg font-medium text-foreground mb-4">
+            <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border">
+              <h3 className="text-base sm:text-lg font-medium text-foreground mb-3 sm:mb-4">
                 {activeMode === "reversa" ? "Últimas Entradas" : "Últimos Insucessos"}
               </h3>
               <div className="space-y-2">
                 {recentEntries.map((entry) => (
-                  <div key={entry.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
-                    <div>
-                      <span className="font-medium text-foreground" data-testid={`text-tracking-${entry.id}`}>
+                  <div key={entry.id} className="flex justify-between items-center p-2 sm:p-3 bg-muted/50 rounded-md">
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium text-foreground text-sm sm:text-base break-all" data-testid={`text-tracking-${entry.id}`}>
                         {entry.trackingCode}
                       </span>
-                      <span className="text-sm text-muted-foreground ml-2">
+                      <span className="text-xs sm:text-sm text-muted-foreground ml-2 block sm:inline">
                         {new Date(entry.receivedAt).toLocaleTimeString('pt-BR')}
                       </span>
                     </div>
-                    <Check className="text-green-600" size={16} />
+                    <Check className="text-green-600 flex-shrink-0" size={16} />
                   </div>
                 ))}
               </div>
