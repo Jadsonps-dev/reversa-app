@@ -357,7 +357,13 @@ export default function Finalization() {
                   <div className="break-all overflow-hidden text-ellipsis">{tracking.trackingCode}</div>
                 </TableCell>
                 <TableCell className="text-gray-800 text-xs sm:text-sm px-3 py-2">
-                  <div className="whitespace-nowrap text-ellipsis overflow-hidden">{new Date(tracking.receivedAt).toLocaleString('pt-BR')}</div>
+                  <div className="whitespace-nowrap text-ellipsis overflow-hidden">{new Date(tracking.receivedAt).toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</div>
                 </TableCell>
                 <TableCell className="px-3 py-2">
                   <Select
@@ -394,7 +400,13 @@ export default function Finalization() {
                       tracking.status === "DIVERGENCIA" ? "text-orange-600" :
                       "text-gray-700"
                     }`}>
-                      {new Date(tracking.completedAt).toLocaleString('pt-BR')}
+                      {new Date(tracking.completedAt).toLocaleString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </div>
                   ) : (
                     <div className="text-gray-700 text-xs sm:text-sm">-</div>
@@ -491,7 +503,7 @@ export default function Finalization() {
                   </div>
                 </TableCell>
                 <TableCell className="px-2 py-2">
-                  <div className="flex flex-col items-center gap-0.5">
+                  <div className="flex items-center justify-center gap-1">
                     {/* Confirmar - Check Verde */}
                     <Button
                       variant="ghost"
