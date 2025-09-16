@@ -148,19 +148,17 @@ function AuthenticatedLayout() {
     <SidebarProvider>
       <div className="flex min-h-screen">
         <AppSidebar />
-        <SidebarInset className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col">
           <Header />
-          <main className="flex-1 p-6 w-full">
-            <div className="w-full">
-              <Switch>
-                <Route path="/" component={Entry} />
-                <Route path="/finalization" component={Finalization} />
-                <Route path="/reports" component={Reports} />
-                <Route component={NotFound} />
-              </Switch>
-            </div>
+          <main className="flex-1 p-6">
+            <Switch>
+              <Route path="/" component={Entry} />
+              <Route path="/finalization" component={Finalization} />
+              <Route path="/reports" component={Reports} />
+              <Route component={NotFound} />
+            </Switch>
           </main>
-        </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );

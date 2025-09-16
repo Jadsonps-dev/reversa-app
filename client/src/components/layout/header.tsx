@@ -77,46 +77,43 @@ export function Header() {
   const empresaName = userInfo?.empresa || 'Carregando...';
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm w-full">
-      <div className="w-full px-6">
-        <div className="flex justify-between items-center h-16">
+    <header className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex justify-between items-center h-16 px-6">
           {/* Logo e Sistema */}
-          <div className="flex items-center space-x-3">
-            <img 
-              src={logoUrl} 
-              alt="Luft Logistics" 
-              className="h-10 w-auto"
-            />
-            <h1 className="text-xl font-semibold text-gray-900">Sistema Reversa</h1>
-          </div>
-
-          {/* Informações centrais */}
-          <div className="flex items-center space-x-8">
-            {/* Nome da Empresa */}
-            <div className="text-center">
-              <p className="text-sm text-gray-500">Empresa</p>
-              <p className="font-semibold text-gray-900" data-testid="text-empresa">{empresaName}</p>
-            </div>
-
-            {/* Data e Hora */}
-            <div className="text-center">
-              <p className="text-sm text-gray-500">Data/Hora</p>
-              <p className="font-semibold text-gray-900" data-testid="text-datetime">{date} - {time}</p>
-            </div>
-          </div>
-
-          {/* Botão de Sair */}
-          <Button
-            variant="outline"
-            onClick={handleLogout}
-            className="flex items-center space-x-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
-            data-testid="button-logout-header"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Sair</span>
-          </Button>
+        <div className="flex items-center space-x-3">
+          <img 
+            src={logoUrl} 
+            alt="Luft Logistics" 
+            className="h-10 w-auto"
+          />
+          <h1 className="text-xl font-semibold text-gray-900">Sistema Reversa</h1>
         </div>
-      </div>
+
+        {/* Informações centrais */}
+        <div className="flex items-center space-x-8">
+          {/* Nome da Empresa */}
+          <div className="text-center">
+            <p className="text-sm text-gray-500">Empresa</p>
+            <p className="font-semibold text-gray-900" data-testid="text-empresa">{empresaName}</p>
+          </div>
+
+          {/* Data e Hora */}
+          <div className="text-center">
+            <p className="text-sm text-gray-500">Data/Hora</p>
+            <p className="font-semibold text-gray-900" data-testid="text-datetime">{date} - {time}</p>
+          </div>
+        </div>
+
+        {/* Botão de Sair */}
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="flex items-center space-x-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+          data-testid="button-logout-header"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sair</span>
+        </Button>
     </header>
   );
 }
