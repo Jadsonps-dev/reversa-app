@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, Save, Trash2, Users, Plus, Edit3, Check } from "lucide-react";
-import type { Tracking, UpdateTracking, User, InsertUser } from "@shared/schema";
+import type { Tracking, UpdateTracking, User, InsertUser, Name, InsertName } from "@shared/schema";
 
 const statusOptions = [
   { value: "PENDENTE", label: "Pendente" },
@@ -48,6 +48,10 @@ export default function Finalization() {
     queryKey: ["/api/users"],
   });
 
+  const { data: customNames = [] } = useQuery<Name[]>({
+    queryKey: ["/api/names"],
+  });
+
   const updateTrackingMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateTracking }) => {
       const response = await apiRequest("PATCH", `/api/trackings/${id}`, data);
@@ -84,6 +88,23 @@ export default function Finalization() {
       toast({
         title: "Erro",
         description: error.message || "Erro ao remover rastreio",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createNameMutation = useMutation({
+    mutationFn: async (data: InsertName) => {
+      const response = await apiRequest("POST", "/api/names", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/names"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao salvar nome",
         variant: "destructive",
       });
     },
@@ -191,14 +212,19 @@ export default function Finalization() {
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
     if (newUserName.trim() && currentTrackingForUser) {
+      // Save the custom name to the database for future use
+      createNameMutation.mutate({
+        users: newUserName.trim(),
+      });
+      
       // Apply the custom name directly to the current tracking
       handleFieldChange(currentTrackingForUser, "user", newUserName.trim());
       setShowUserForm(false);
       setNewUserName("");
       setCurrentTrackingForUser(null);
       toast({
-        title: "Nome aplicado",
-        description: "Nome customizado aplicado ao rastreio.",
+        title: "Nome salvo e aplicado",
+        description: "Nome customizado salvo para uso futuro e aplicado ao rastreio.",
       });
     }
   };
@@ -208,9 +234,9 @@ export default function Finalization() {
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full max-w-none mx-0 space-y-6">
       {/* Tracking Management Section */}
-      <Card className="shadow-sm border border-border w-full">
+      <Card className="shadow-sm border border-border w-full max-w-none">
         {/* Header */}
         <div className="px-6 py-4 border-b border-border">
           <div className="flex justify-between items-center">
@@ -400,6 +426,11 @@ export default function Finalization() {
                         {users.map((user) => (
                           <SelectItem key={user.id} value={user.name}>
                             {user.name}
+                          </SelectItem>
+                        ))}
+                        {customNames.map((customName) => (
+                          <SelectItem key={customName.id} value={customName.users}>
+                            {customName.users}
                           </SelectItem>
                         ))}
                         <SelectItem value="ADD_NEW" className="text-blue-600 font-medium">

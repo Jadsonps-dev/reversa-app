@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, trackings, users } from "@shared/schema";
+import { type User, type InsertUser, type Tracking, type InsertTracking, type UpdateTracking, type Name, type InsertName, trackings, users, name } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -15,6 +15,11 @@ export interface IStorage {
   createTracking(tracking: InsertTracking): Promise<Tracking>;
   updateTracking(id: string, tracking: UpdateTracking): Promise<Tracking>;
   deleteTracking(id: string): Promise<void>;
+
+  // Name methods
+  getAllNames(): Promise<Name[]>;
+  createName(nameData: InsertName): Promise<Name>;
+  deleteName(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -94,6 +99,22 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTracking(id: string): Promise<void> {
     await db.delete(trackings).where(eq(trackings.id, id));
+  }
+
+  async getAllNames(): Promise<Name[]> {
+    return await db.select().from(name).orderBy(name.users);
+  }
+
+  async createName(insertName: InsertName): Promise<Name> {
+    const [nameRecord] = await db
+      .insert(name)
+      .values(insertName)
+      .returning();
+    return nameRecord;
+  }
+
+  async deleteName(id: string): Promise<void> {
+    await db.delete(name).where(eq(name.id, id));
   }
 }
 

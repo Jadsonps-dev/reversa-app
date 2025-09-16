@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, loginSchema } from "@shared/schema";
+import { insertTrackingSchema, updateTrackingSchema, insertUserSchema, loginSchema, insertNameSchema } from "@shared/schema";
 import { setupAuth, hashPassword } from "./auth";
 import passport from "passport";
 import { z } from "zod";
@@ -114,6 +114,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.error("Error creating user:", error);
       res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  // Get all names
+  app.get("/api/names", async (req, res) => {
+    try {
+      const names = await storage.getAllNames();
+      res.json(names);
+    } catch (error) {
+      console.error("Error fetching names:", error);
+      res.status(500).json({ message: "Failed to fetch names" });
+    }
+  });
+
+  // Create new name
+  app.post("/api/names", async (req, res) => {
+    try {
+      const validatedData = insertNameSchema.parse(req.body);
+      const name = await storage.createName(validatedData);
+      res.status(201).json(name);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dados inválidos", errors: error.errors });
+      }
+      console.error("Error creating name:", error);
+      res.status(500).json({ message: "Failed to create name" });
+    }
+  });
+
+  // Delete name
+  app.delete("/api/names/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteName(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting name:", error);
+      res.status(500).json({ message: "Failed to delete name" });
     }
   });
 
