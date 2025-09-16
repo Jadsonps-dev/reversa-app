@@ -89,28 +89,7 @@ export default function Finalization() {
     },
   });
 
-  const createUserMutation = useMutation({
-    mutationFn: async (userData: InsertUser) => {
-      const response = await apiRequest("POST", "/api/users", userData);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      toast({
-        title: "Sucesso!",
-        description: "Usuário adicionado com sucesso.",
-      });
-      setNewUserName("");
-      setShowUserForm(false);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erro",
-        description: error.message || "Erro ao adicionar usuário",
-        variant: "destructive",
-      });
-    },
-  });
+  // Note: No createUserMutation needed - user field is just text
 
   const filteredTrackings = useMemo(() => {
     return trackings.filter((tracking) => {
@@ -206,10 +185,21 @@ export default function Finalization() {
     return editingValues[tracking.id]?.[field] ?? tracking[field] ?? "";
   };
 
+  // Store which tracking we're adding a user for
+  const [currentTrackingForUser, setCurrentTrackingForUser] = useState<string | null>(null);
+
   const handleCreateUser = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newUserName.trim()) {
-      createUserMutation.mutate({ name: newUserName.trim() });
+    if (newUserName.trim() && currentTrackingForUser) {
+      // Apply the custom name directly to the current tracking
+      handleFieldChange(currentTrackingForUser, "user", newUserName.trim());
+      setShowUserForm(false);
+      setNewUserName("");
+      setCurrentTrackingForUser(null);
+      toast({
+        title: "Nome aplicado",
+        description: "Nome customizado aplicado ao rastreio.",
+      });
     }
   };
 
@@ -395,6 +385,7 @@ export default function Finalization() {
                       value={String(getFieldValue(tracking, "user") || "")}
                       onValueChange={(value) => {
                         if (value === "ADD_NEW") {
+                          setCurrentTrackingForUser(tracking.id);
                           setShowUserForm(true);
                           return;
                         }
@@ -412,7 +403,7 @@ export default function Finalization() {
                           </SelectItem>
                         ))}
                         <SelectItem value="ADD_NEW" className="text-blue-600 font-medium">
-                          + Adicionar novo usuário
+                          + Digitar nome customizado
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -421,7 +412,7 @@ export default function Finalization() {
                     {showUserForm && (
                       <form onSubmit={handleCreateUser} className="flex items-center gap-2">
                         <Input
-                          placeholder="Nome do novo usuário"
+                          placeholder="Digite o nome do usuário"
                           value={newUserName}
                           onChange={(e) => setNewUserName(e.target.value)}
                           className="flex-1"
@@ -431,7 +422,7 @@ export default function Finalization() {
                         <Button
                           type="submit"
                           size="sm"
-                          disabled={createUserMutation.isPending || !newUserName.trim()}
+                          disabled={!newUserName.trim()}
                           data-testid="button-save-user"
                         >
                           <Check size={16} />
