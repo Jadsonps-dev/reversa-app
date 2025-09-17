@@ -47,6 +47,13 @@ export async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
   const PostgresSessionStore = connectPg(session);
   
+  // Verificar se a SESSION_SECRET está definida em produção
+  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET é obrigatória em produção');
+  }
+  
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development-secret-change-in-production",
     resave: false,
@@ -57,13 +64,18 @@ export function setupAuth(app: Express) {
       tableName: "user_sessions"
     }),
     cookie: {
-      secure: false, // Set to true in production with HTTPS
+      secure: isProduction, // true em produção para HTTPS
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: isProduction ? 'strict' : 'lax', // Proteção CSRF em produção
     },
+    name: 'trackingSession', // Nome customizado da sessão
   };
 
-  app.set("trust proxy", 1);
+  // Trust proxy em produção (para load balancers/nginx)
+  if (isProduction) {
+    app.set("trust proxy", 1);
+  }
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());

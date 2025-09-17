@@ -242,6 +242,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(userWithoutPassword);
   });
 
+  // Health check endpoint para containers e load balancers
+  app.get("/api/health", async (req, res) => {
+    try {
+      // Verificar se o banco de dados está acessível
+      await storage.getAllTrackings();
+      res.status(200).json({ 
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        service: 'tracking-system'
+      });
+    } catch (error) {
+      res.status(503).json({ 
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        service: 'tracking-system',
+        error: 'Database connection failed'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
