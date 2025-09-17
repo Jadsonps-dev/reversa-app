@@ -68,7 +68,9 @@ export default function Reports() {
 
     // Helper function para obter data local no formato YYYY-MM-DD
     const getLocalDayKey = (date: Date) => {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate()).toLocaleDateString('sv-SE');
+      // Criar nova data sem problemas de timezone
+      const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      return localDate.toISOString().split('T')[0];
     };
 
     // Produtividade por usuário (apenas rastreios finalizados hoje)
@@ -92,9 +94,9 @@ export default function Reports() {
     // Dados para gráfico de entrada vs finalizados por dia (últimos 7 dias)
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - i);
+      date.setDate(date.getDate() - (6 - i)); // Começar de 6 dias atrás até hoje
       return getLocalDayKey(date);
-    }).reverse();
+    });
 
     const chartData = last7Days.map(date => {
       // Rastreios que entraram neste dia
@@ -375,7 +377,7 @@ export default function Reports() {
                     formatter={(value, name) => [value, name === 'rastreios' ? 'Rastreios' : 'Finalizados']}
                   />
                   <Legend />
-                  <Bar dataKey="rastreios" fill="#3b82f6" name="Rastreios">
+                  <Bar dataKey="rastreios" stackId="a" fill="#3b82f6" name="Rastreios">
                     <LabelList 
                       dataKey="rastreios" 
                       position="center" 
@@ -385,7 +387,7 @@ export default function Reports() {
                       formatter={(value) => value > 0 ? value : ''}
                     />
                   </Bar>
-                  <Bar dataKey="finalizados" fill="#10b981" name="Finalizados">
+                  <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados">
                     <LabelList 
                       dataKey="finalizados" 
                       position="center" 
