@@ -97,20 +97,28 @@ export default function Reports() {
     }).reverse();
 
     const chartData = last7Days.map(date => {
-      const entradas = trackings.filter(t => {
+      // Rastreios que entraram neste dia
+      const rastreiosDodia = trackings.filter(t => {
         if (!t.receivedAt) return false;
         return getLocalDayKey(new Date(t.receivedAt)) === date;
-      }).length;
+      });
 
-      const finalizados = trackings.filter(t => {
-        if (!t.completedAt || t.status !== 'TC_FINALIZADO') return false;
-        return getLocalDayKey(new Date(t.completedAt)) === date;
-      }).reduce((sum, t) => sum + (t.quantity || 0), 0);
+      // Total de rastreios que entraram no dia
+      const total = rastreiosDodia.length;
+
+      // Rastreios finalizados (status diferente de PENDENTE) que entraram neste dia
+      const finalizados = rastreiosDodia.filter(t => 
+        t.status && t.status !== 'PENDENTE'
+      ).length;
+
+      // Rastreios pendentes que entraram neste dia
+      const pendentes = total - finalizados;
 
       return {
         data: date,
-        entradas,
+        total,
         finalizados,
+        pendentes,
       };
     });
 
@@ -368,11 +376,11 @@ export default function Reports() {
                   <YAxis />
                   <Tooltip 
                     labelFormatter={(value) => new Date(value).toLocaleDateString('pt-BR')}
-                    formatter={(value, name) => [value, name === 'entradas' ? 'Entradas' : 'Finalizados']}
+                    formatter={(value, name) => [value, name === 'pendentes' ? 'Pendentes' : 'Finalizados']}
                   />
                   <Legend />
-                  <Bar dataKey="entradas" fill="#3b82f6" name="Entradas" />
-                  <Bar dataKey="finalizados" fill="#10b981" name="Finalizados" />
+                  <Bar dataKey="pendentes" stackId="a" fill="#3b82f6" name="Pendentes" />
+                  <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
