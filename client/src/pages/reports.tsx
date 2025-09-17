@@ -19,10 +19,7 @@ const statusOptions = [
 ];
 
 export default function Reports() {
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [typeFilter, setTypeFilter] = useState("ALL");
   const [dateFromFilter, setDateFromFilter] = useState("");
-  const [dateToFilter, setDateToFilter] = useState("");
 
   const { data: trackings = [], isLoading, refetch } = useQuery<Tracking[]>({
     queryKey: ["/api/trackings"],
@@ -30,18 +27,16 @@ export default function Reports() {
 
   const filteredTrackings = useMemo(() => {
     return trackings.filter((tracking) => {
-      const matchesStatus = statusFilter === "ALL" || (tracking.status || "PENDENTE") === statusFilter;
-      const matchesType = typeFilter === "ALL" || 
-        (typeFilter === "REVERSA" && (tracking.statusRastreio === "normal" || !tracking.statusRastreio)) ||
-        (typeFilter === "INSUCESSO" && tracking.statusRastreio === "insucesso");
+      const matchesDate = !dateFromFilter || (() => {
+        const trackingDate = new Date(tracking.receivedAt);
+        const filterDate = new Date(dateFromFilter);
+        // Compara apenas a data (ignora o horário)
+        return trackingDate.toDateString() === filterDate.toDateString();
+      })();
 
-      const trackingDate = new Date(tracking.receivedAt);
-      const matchesDateFrom = !dateFromFilter || trackingDate >= new Date(dateFromFilter);
-      const matchesDateTo = !dateToFilter || trackingDate <= new Date(dateToFilter + "T23:59:59");
-
-      return matchesStatus && matchesType && matchesDateFrom && matchesDateTo;
+      return matchesDate;
     });
-  }, [trackings, statusFilter, typeFilter, dateFromFilter, dateToFilter]);
+  }, [trackings, dateFromFilter]);
 
   const stats = useMemo(() => {
     // Separar por tipo (normal/reversa vs insucesso)
@@ -207,16 +202,9 @@ export default function Reports() {
             <div className="flex items-center gap-3">
               <Input
                 type="date"
-                placeholder="Data inicial"
+                placeholder="Selecionar data"
                 value={dateFromFilter}
                 onChange={(e) => setDateFromFilter(e.target.value)}
-                className="w-40"
-              />
-              <Input
-                type="date"
-                placeholder="Data final"
-                value={dateToFilter}
-                onChange={(e) => setDateToFilter(e.target.value)}
                 className="w-40"
               />
               <Button
@@ -320,68 +308,7 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* Filters */}
-      <Card className="w-full">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base sm:text-lg">Filtros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos os Tipos</SelectItem>
-                <SelectItem value="REVERSA">Reversa</SelectItem>
-                <SelectItem value="INSUCESSO">Insucesso</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Input
-              type="date"
-              placeholder="Data inicial"
-              value={dateFromFilter}
-              onChange={(e) => setDateFromFilter(e.target.value)}
-              className="w-full"
-            />
-
-            <Input
-              type="date"
-              placeholder="Data final"
-              value={dateToFilter}
-              onChange={(e) => setDateToFilter(e.target.value)}
-              className="w-full"
-            />
-
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setStatusFilter("ALL");
-                setTypeFilter("ALL");
-                setDateFromFilter("");
-                setDateToFilter("");
-              }}
-              className="w-full text-xs sm:text-sm"
-            >
-              Limpar Filtros
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Tabela de Produtividade dos Usuários */}
       <Card className="w-full">
