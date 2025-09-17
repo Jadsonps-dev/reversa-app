@@ -1,0 +1,52 @@
+PS C:\Users\jadson.sales\Desktop\RastreioLite> npm install                                                                                                     
+
+removed 14 packages, and audited 497 packages in 4s
+
+67 packages are looking for funding
+  run `npm fund` for details
+
+5 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+PS C:\Users\jadson.sales\Desktop\RastreioLite> npm run build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.20 building for production...
+✓ 2643 modules transformed.
+dist/public/client/admin.html                             0.55 kB │ gzip:   0.33 kB
+dist/public/client/index.html                             2.27 kB │ gzip:   0.88 kB
+dist/public/assets/logoluft_1758035573661-BaIObDB1.png  122.12 kB
+dist/public/assets/index-CzCod6mJ.css                    64.02 kB │ gzip:  11.58 kB
+dist/public/assets/admin-CYr1pRG_.js                      0.66 kB │ gzip:   0.42 kB
+dist/public/assets/main-1LDP1ARB.js                     432.65 kB │ gzip: 119.48 kB
+dist/public/assets/index-dTLOWQd3.js                    457.72 kB │ gzip: 142.61 kB
+✓ built in 8.13s
+
+  dist\index.js  20.4kb
+
+Done in 10ms
+PS C:\Users\jadson.sales\Desktop\RastreioLite> npm start    
+
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.js
+
+'NODE_ENV' não é reconhecido como um comando interno
+ou externo, um programa operável ou um arquivo em lotes.
+PS C:\Users\jadson.sales\Desktop\RastreioLite> node dist/index.js
+file:///C:/Users/jadson.sales/Desktop/RastreioLite/dist/index.js:89
+  throw new Error(
+        ^
+
+Error: DATABASE_URL must be set. Did you forget to provision a database?
+    at file:///C:/Users/jadson.sales/Desktop/RastreioLite/dist/index.js:89:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+
+Node.js v22.15.1
+PS C:\Users\jadson.sales\Desktop\RastreioLite> 
