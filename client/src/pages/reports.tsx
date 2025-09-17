@@ -375,7 +375,7 @@ export default function Reports() {
                     formatter={(value, name) => [value, name === 'rastreios' ? 'Rastreios' : 'Finalizados']}
                   />
                   <Legend />
-                  <Bar dataKey="rastreios" stackId="a" fill="#3b82f6" name="Rastreios">
+                  <Bar dataKey="rastreios" fill="#3b82f6" name="Rastreios">
                     <LabelList 
                       dataKey="rastreios" 
                       position="center" 
@@ -385,7 +385,7 @@ export default function Reports() {
                       formatter={(value) => value > 0 ? value : ''}
                     />
                   </Bar>
-                  <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados">
+                  <Bar dataKey="finalizados" fill="#10b981" name="Finalizados">
                     <LabelList 
                       dataKey="finalizados" 
                       position="center" 
