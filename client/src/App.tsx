@@ -42,6 +42,8 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
     } finally {
       // Sempre limpar estado local
       localStorage.removeItem("authToken");
+      // Disparar evento para atualizar estado de autenticação
+      window.dispatchEvent(new CustomEvent('authChange'));
       setLocation("/login");
     }
   };
@@ -189,7 +191,28 @@ function AuthenticatedLayout() {
 }
 
 function App() {
-  const isAuthenticated = !!localStorage.getItem("authToken");
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("authToken"));
+
+  // Listen for changes in localStorage to update authentication state
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsAuthenticated(!!localStorage.getItem("authToken"));
+    };
+
+    // Listen for storage changes
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also create a custom event for immediate updates within the same tab
+    const handleAuthChange = () => {
+      setIsAuthenticated(!!localStorage.getItem("authToken"));
+    };
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -67,6 +67,8 @@ export default function Login() {
         console.log("Login bem-sucedido:", user);
         // Salvar o token de autenticação no localStorage
         localStorage.setItem("authToken", user.id || "authenticated");
+        // Disparar evento para atualizar estado de autenticação
+        window.dispatchEvent(new CustomEvent('authChange'));
         // Redirecionar para a página principal após login bem-sucedido
         window.location.href = "/";
       } else {
