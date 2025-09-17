@@ -95,7 +95,7 @@ export default function Reports() {
     // Dados para gráfico de entrada vs finalizados por dia (últimos 7 dias)
     const now = new Date();
     const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (6 - i));
+      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
       return getLocalDayKey(date);
     });
 
