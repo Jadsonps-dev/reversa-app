@@ -111,14 +111,10 @@ export default function Reports() {
         t.status && t.status !== 'PENDENTE'
       ).length;
 
-      // Rastreios pendentes que entraram neste dia
-      const pendentes = total - finalizados;
-
       return {
         data: date,
-        total,
+        rastreios: total,
         finalizados,
-        pendentes,
       };
     });
 
@@ -371,15 +367,15 @@ export default function Reports() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="data" 
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                   />
                   <YAxis />
                   <Tooltip 
                     labelFormatter={(value) => new Date(value).toLocaleDateString('pt-BR')}
-                    formatter={(value, name) => [value, name === 'pendentes' ? 'Pendentes' : 'Finalizados']}
+                    formatter={(value, name) => [value, name === 'rastreios' ? 'Rastreios' : 'Finalizados']}
                   />
                   <Legend />
-                  <Bar dataKey="pendentes" stackId="a" fill="#3b82f6" name="Pendentes" />
+                  <Bar dataKey="rastreios" stackId="a" fill="#3b82f6" name="Rastreios" />
                   <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados" />
                 </BarChart>
               </ResponsiveContainer>
