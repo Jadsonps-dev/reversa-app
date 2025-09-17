@@ -21,7 +21,7 @@ backup_database() {
     fi
     
     BACKUP_FILE="$BACKUP_DIR/backup_$(date +%Y%m%d_%H%M%S).sql"
-    docker exec tracking_db pg_dump -U postgres tracking_system > "$BACKUP_FILE"
+    docker exec tracking_db pg_dump -U "$DB_USER" "$DB_NAME" > "$BACKUP_FILE"
     echo "✅ Backup salvo em: $BACKUP_FILE"
 }
 
@@ -33,16 +33,28 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
+# Carregar variáveis de ambiente
+source .env
+DB_USER="${DB_USER:-postgres}"
+DB_NAME="${DB_NAME:-tracking_system}"
+APP_PORT="${APP_PORT:-3000}"
+
+# Verificar qual versão do Docker Compose usar
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
+    echo "❌ Docker Compose não está instalado!"
+    exit 1
+fi
+
 # Verificar se o Docker está instalado
 if ! command -v docker &> /dev/null; then
     echo "❌ Docker não está instalado!"
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ Docker Compose não está instalado!"
-    exit 1
-fi
 
 # Fazer backup se for produção
 if [ "$ENVIRONMENT" = "production" ]; then
@@ -50,36 +62,36 @@ if [ "$ENVIRONMENT" = "production" ]; then
 fi
 
 echo "🔄 Parando containers existentes..."
-docker-compose down
+$DOCKER_COMPOSE down
 
 echo "🏗️ Construindo nova imagem..."
-docker-compose build --no-cache
+$DOCKER_COMPOSE build --no-cache
 
 echo "🎯 Executando migrações do banco..."
-docker-compose up -d postgres
+$DOCKER_COMPOSE up -d postgres
 sleep 10
 
 # Aguardar o banco ficar pronto
 echo "⏳ Aguardando banco de dados..."
-until docker exec tracking_db pg_isready -U postgres; do
+until docker exec tracking_db pg_isready -U "$DB_USER"; do
     echo "Aguardando PostgreSQL..."
     sleep 2
 done
 
 echo "🚀 Iniciando aplicação..."
-docker-compose up -d
+$DOCKER_COMPOSE up -d
 
 echo "⏳ Aguardando aplicação iniciar..."
 sleep 15
 
 # Verificar se a aplicação está rodando
-if curl -f http://localhost:3000/api/health > /dev/null 2>&1; then
+if curl -f http://localhost:$APP_PORT/api/health > /dev/null 2>&1; then
     echo "✅ Deploy concluído com sucesso!"
-    echo "🌐 Aplicação disponível em: http://localhost:3000"
+    echo "🌐 Aplicação disponível em: http://localhost:$APP_PORT"
 else
     echo "❌ Falha no health check da aplicação"
     echo "📋 Verificando logs..."
-    docker-compose logs app
+    $DOCKER_COMPOSE logs app
     exit 1
 fi
 

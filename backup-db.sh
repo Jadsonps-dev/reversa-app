@@ -7,8 +7,14 @@ set -e
 
 BACKUP_DIR="/var/backups/tracking-system"
 CONTAINER_NAME="tracking_db"
-DB_USER="postgres"
-DB_NAME="tracking_system"
+
+# Ler variáveis do .env se existir
+if [ -f ".env" ]; then
+    source .env
+fi
+
+DB_USER="${DB_USER:-postgres}"
+DB_NAME="${DB_NAME:-tracking_system}"
 
 # Criar diretório de backup se não existir
 if [ ! -d "$BACKUP_DIR" ]; then
