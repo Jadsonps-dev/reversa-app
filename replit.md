@@ -2,6 +2,8 @@
 
 This is a tracking system application built with a full-stack architecture using React/TypeScript for the frontend and Express.js with Node.js for the backend. The application manages package tracking codes with features for entry, finalization, and status management. It's designed as a warehouse or logistics management tool where users can input tracking codes and manage their processing status through different stages.
 
+**Production Ready**: The application is now fully configured for production deployment with Docker containerization, automated deployment scripts, and VPS hosting capabilities.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -38,6 +40,13 @@ Preferred communication style: Simple, everyday language.
 - **Build Process**: Vite for frontend bundling, esbuild for backend compilation
 - **Type Safety**: Shared TypeScript types between frontend and backend via shared directory
 
+## Production Environment
+- **Containerization**: Docker multi-stage build with optimized production image
+- **Orchestration**: Docker Compose with PostgreSQL, application, and optional Nginx
+- **Security**: Production-hardened session management, secure cookies, health checks
+- **Deployment**: Automated deployment scripts with backup, rollback capabilities
+- **Monitoring**: Health check endpoints, structured logging, and container monitoring
+
 ## Key Design Decisions
 - **Shared Schema Approach**: Common validation and type definitions in `/shared` directory eliminates type drift between frontend and backend
 - **Component-First UI**: Leverages Shadcn/ui for consistent, accessible components with Radix UI primitives
@@ -69,3 +78,28 @@ Preferred communication style: Simple, everyday language.
 - **Zod**: Runtime type validation and schema parsing
 - **Date-fns**: Date manipulation and formatting utilities
 - **Wouter**: Lightweight routing for single-page application navigation
+
+# Production Deployment
+
+## Docker Configuration
+- **Multi-stage Dockerfile**: Optimized for production with builder and runtime stages
+- **Security**: Non-root user, minimal base image, health checks
+- **Environment**: Production-specific configurations and secrets management
+
+## Deployment Files
+- `Dockerfile`: Container configuration for the application
+- `docker-compose.yml`: Service orchestration with PostgreSQL and optional Nginx
+- `deploy.sh`: Automated deployment script with backup and health checks
+- `setup-vps.sh`: VPS initial configuration script
+- `backup-db.sh`: Database backup utility
+- `nginx.conf`: Reverse proxy configuration with SSL and rate limiting
+- `.env.example`: Environment variables template
+- `README-DEPLOY.md`: Complete deployment documentation
+
+## Key Features
+- **Automated Backup**: Database backup before deployments
+- **Health Monitoring**: Application and database health checks
+- **SSL Ready**: Nginx configuration with SSL/TLS support
+- **Rate Limiting**: Protection against abuse
+- **Log Management**: Structured logging and rotation
+- **Security Headers**: OWASP recommended security headers
