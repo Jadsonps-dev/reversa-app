@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Entry from "@/pages/entry";
@@ -16,9 +16,19 @@ import { Button } from "@/components/ui/button";
 import { LogOut, FileInput, CheckSquare, BarChart3, Menu, Users } from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { useState, useEffect } from "react";
+import type { User } from "@shared/schema";
+
+// Hook customizado para verificar se o usuário é admin
+function useCurrentUser() {
+  return useQuery<User>({
+    queryKey: ['/api/user'],
+    enabled: !!localStorage.getItem("authToken"),
+  });
+}
 
 function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void; }) {
   const [location, setLocation] = useLocation();
+  const { data: user } = useCurrentUser();
 
   const handleLogout = async () => {
     try {
@@ -45,7 +55,7 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
   };
 
 
-  const menuItems = [
+  const allMenuItems = [
     {
       title: "Entrada",
       icon: FileInput,
@@ -67,6 +77,12 @@ function AppSidebar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle:
       path: "/admin",
     },
   ];
+
+  // Filtrar menu baseado no role do usuário - apenas admin pode ver Administração
+  const isAdmin = user?.login === 'admin';
+  const menuItems = allMenuItems.filter(item => 
+    item.path !== '/admin' || isAdmin
+  );
 
   return (
     <Sidebar className={`transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
