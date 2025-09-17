@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, FileText, BarChart3, Package, Check, XCircle, Clock, User } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, LabelList } from "recharts";
 import type { Tracking } from "@shared/schema";
 
 const statusOptions = [
@@ -375,8 +375,26 @@ export default function Reports() {
                     formatter={(value, name) => [value, name === 'rastreios' ? 'Rastreios' : 'Finalizados']}
                   />
                   <Legend />
-                  <Bar dataKey="rastreios" stackId="a" fill="#3b82f6" name="Rastreios" />
-                  <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados" />
+                  <Bar dataKey="rastreios" stackId="a" fill="#3b82f6" name="Rastreios">
+                    <LabelList 
+                      dataKey="rastreios" 
+                      position="center" 
+                      fill="#ffffff" 
+                      fontSize={12}
+                      fontWeight="bold"
+                      formatter={(value) => value > 0 ? value : ''}
+                    />
+                  </Bar>
+                  <Bar dataKey="finalizados" stackId="a" fill="#10b981" name="Finalizados">
+                    <LabelList 
+                      dataKey="finalizados" 
+                      position="center" 
+                      fill="#ffffff" 
+                      fontSize={12}
+                      fontWeight="bold"
+                      formatter={(value) => value > 0 ? value : ''}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
