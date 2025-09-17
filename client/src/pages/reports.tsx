@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw, Download, BarChart3, Package, CheckCircle, XCircle, Clock, User } from "lucide-react";
+import { RefreshCw, FileText, BarChart3, Package, Check, XCircle, Clock, User } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import type { Tracking } from "@shared/schema";
@@ -35,11 +34,11 @@ export default function Reports() {
       const matchesType = typeFilter === "ALL" || 
         (typeFilter === "REVERSA" && (tracking.statusRastreio === "normal" || !tracking.statusRastreio)) ||
         (typeFilter === "INSUCESSO" && tracking.statusRastreio === "insucesso");
-      
+
       const trackingDate = new Date(tracking.receivedAt);
       const matchesDateFrom = !dateFromFilter || trackingDate >= new Date(dateFromFilter);
       const matchesDateTo = !dateToFilter || trackingDate <= new Date(dateToFilter + "T23:59:59");
-      
+
       return matchesStatus && matchesType && matchesDateFrom && matchesDateTo;
     });
   }, [trackings, statusFilter, typeFilter, dateFromFilter, dateToFilter]);
@@ -48,14 +47,14 @@ export default function Reports() {
     // Separar por tipo (normal/reversa vs insucesso)
     const normalTrackings = trackings.filter(t => t.statusRastreio === "normal" || !t.statusRastreio);
     const insucessoTrackings = trackings.filter(t => t.statusRastreio === "insucesso");
-    
+
     // Métricas para Normal/Reversa
     const normalPackagesProduzidos = normalTrackings.filter(t => t.status && t.status !== "PENDENTE").length;
     const normalPendente = normalTrackings.filter(t => (t.status || "PENDENTE") === "PENDENTE").length;
     const normalPecasProduzidas = normalTrackings
       .filter(t => t.status === "TC_FINALIZADO")
       .reduce((sum, t) => sum + (t.quantity || 0), 0);
-    
+
     // Métricas para Insucesso
     const insucessoPackagesProduzidos = insucessoTrackings.filter(t => t.status && t.status !== "PENDENTE").length;
     const insucessoPendente = insucessoTrackings.filter(t => (t.status || "PENDENTE") === "PENDENTE").length;
@@ -68,7 +67,7 @@ export default function Reports() {
     const pendente = filteredTrackings.filter(t => (t.status || "PENDENTE") === "PENDENTE").length;
     const finalizado = filteredTrackings.filter(t => t.status === "TC_FINALIZADO").length;
     const cancelado = filteredTrackings.filter(t => t.status === "CANCELADO").length;
-    const divergencia = filteredTrackings.filter(t => t.status === "DIVERGENCIA").length;
+    const divergncia = filteredTrackings.filter(t => t.status === "DIVERGENCIA").length;
     const reversa = filteredTrackings.filter(t => t.statusRastreio === "normal" || !t.statusRastreio).length;
     const insucesso = filteredTrackings.filter(t => t.statusRastreio === "insucesso").length;
 
@@ -107,11 +106,11 @@ export default function Reports() {
         if (!t.receivedAt) return false;
         return getLocalDayKey(new Date(t.receivedAt)) === date;
       }).length;
-      
+
       const finalizados = trackings.filter(t => {
         if (!t.completedAt || t.status !== 'TC_FINALIZADO') return false;
         return getLocalDayKey(new Date(t.completedAt)) === date;
-      }).length;
+      }).reduce((sum, t) => sum + (t.quantity || 0), 0);
 
       return {
         data: date,
@@ -150,13 +149,13 @@ export default function Reports() {
       pendente,
       finalizado,
       cancelado,
-      divergencia,
+      divergncia,
       reversa,
       insucesso
     };
   }, [filteredTrackings, trackings]);
 
-  const exportData = () => {
+  const exportToCSV = () => {
     const csvContent = [
       ["Rastreio", "Data Recebido", "Status", "Data Finalização", "Qtd Peças", "Usuário", "Tipo"].join(","),
       ...filteredTrackings.map(tracking => [
@@ -189,114 +188,131 @@ export default function Reports() {
     <div className="w-full">
       <div className="w-full space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Dashboard & Relatórios</h1>
-          <p className="text-sm text-gray-600 mt-1">Visão geral dos rastreios e estatísticas</p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="px-3 py-2 text-xs sm:text-sm"
-          >
-            <RefreshCw className="mr-1 sm:mr-2" size={14} />
-            Atualizar
-          </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={exportData}
-            className="px-3 py-2 text-xs sm:text-sm"
-          >
-            <Download className="mr-1 sm:mr-2" size={14} />
-            Exportar CSV
-          </Button>
-        </div>
-      </div>
+      <Card className="w-full">
+        <CardHeader className="pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <BarChart3 className="text-blue-600" size={24} />
+              </div>
+              <div>
+                <CardTitle className="text-xl sm:text-2xl text-foreground">
+                  Relatórios e Análises
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Visualize métricas e dados do sistema
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Input
+                type="date"
+                placeholder="Data inicial"
+                value={dateFromFilter}
+                onChange={(e) => setDateFromFilter(e.target.value)}
+                className="w-40"
+              />
+              <Input
+                type="date"
+                placeholder="Data final"
+                value={dateToFilter}
+                onChange={(e) => setDateToFilter(e.target.value)}
+                className="w-40"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isLoading}
+                data-testid="button-refresh-reports"
+              >
+                <RefreshCw className="mr-2" size={16} />
+                Atualizar
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportToCSV}
+                data-testid="button-export-csv"
+                className="flex items-center gap-2"
+              >
+                <FileText size={16} />
+                Exportar CSV
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
 
       {/* Cards de Métricas Principais */}
       <div className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-3">Métricas Gerais</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-6 gap-3">
             {/* Cards Normal/Reversa */}
             <Card className="border-blue-200 bg-blue-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <Package className="h-8 w-8 text-blue-600" data-testid="icon-packages-normal" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pacotes Produzidos</p>
-                    <p className="text-2xl font-bold text-blue-600" data-testid="text-packages-normal">{stats.normalPackagesProduzidos}</p>
-                    <p className="text-xs text-muted-foreground">Normal/Reversa</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-yellow-200 bg-yellow-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <Clock className="h-8 w-8 text-yellow-600" data-testid="icon-pending-normal" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pendente</p>
-                    <p className="text-2xl font-bold text-yellow-600" data-testid="text-pending-normal">{stats.normalPendente}</p>
-                    <p className="text-xs text-muted-foreground">Normal/Reversa</p>
-                  </div>
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Package className="h-6 w-6 text-blue-600 mx-auto mb-2" data-testid="icon-packages-normal" />
+                  <p className="text-xs text-muted-foreground mb-1">Pacotes Produzidos</p>
+                  <p className="text-xl font-bold text-blue-600" data-testid="text-packages-normal">{stats.normalPackagesProduzidos}</p>
+                  <p className="text-xs text-muted-foreground">Normal/Reversa</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-green-200 bg-green-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-8 w-8 text-green-600" data-testid="icon-pieces-normal" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Peças Produzidas</p>
-                    <p className="text-2xl font-bold text-green-600" data-testid="text-pieces-normal">{stats.normalPecasProduzidas}</p>
-                    <p className="text-xs text-muted-foreground">Normal/Reversa</p>
-                  </div>
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Clock className="h-6 w-6 text-green-600 mx-auto mb-2" data-testid="icon-pending-normal" />
+                  <p className="text-xs text-muted-foreground mb-1">Pendente</p>
+                  <p className="text-xl font-bold text-green-600" data-testid="text-pending-normal">{stats.normalPendente}</p>
+                  <p className="text-xs text-muted-foreground">Normal/Reversa</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-purple-200 bg-purple-50/50">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Check className="h-6 w-6 text-purple-600 mx-auto mb-2" data-testid="icon-pieces-normal" />
+                  <p className="text-xs text-muted-foreground mb-1">Peças Produzidas</p>
+                  <p className="text-xl font-bold text-purple-600" data-testid="text-pieces-normal">{stats.normalPecasProduzidas}</p>
+                  <p className="text-xs text-muted-foreground">Normal/Reversa</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Cards Insucesso */}
             <Card className="border-red-200 bg-red-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <Package className="h-8 w-8 text-red-600" data-testid="icon-packages-insucesso" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pacotes Produzidos</p>
-                    <p className="text-2xl font-bold text-red-600" data-testid="text-packages-insucesso">{stats.insucessoPackagesProduzidos}</p>
-                    <p className="text-xs text-muted-foreground">Insucesso</p>
-                  </div>
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Package className="h-6 w-6 text-red-600 mx-auto mb-2" data-testid="icon-packages-insucesso" />
+                  <p className="text-xs text-muted-foreground mb-1">Pacotes Produzidos</p>
+                  <p className="text-xl font-bold text-red-600" data-testid="text-packages-insucesso">{stats.insucessoPackagesProduzidos}</p>
+                  <p className="text-xs text-muted-foreground">Insucesso</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-orange-200 bg-orange-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <Clock className="h-8 w-8 text-orange-600" data-testid="icon-pending-insucesso" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pendente</p>
-                    <p className="text-2xl font-bold text-orange-600" data-testid="text-pending-insucesso">{stats.insucessoPendente}</p>
-                    <p className="text-xs text-muted-foreground">Insucesso</p>
-                  </div>
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Clock className="h-6 w-6 text-orange-600 mx-auto mb-2" data-testid="icon-pending-insucesso" />
+                  <p className="text-xs text-muted-foreground mb-1">Pendente</p>
+                  <p className="text-xl font-bold text-orange-600" data-testid="text-pending-insucesso">{stats.insucessoPendente}</p>
+                  <p className="text-xs text-muted-foreground">Insucesso</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 bg-purple-50/50">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-8 w-8 text-purple-600" data-testid="icon-pieces-insucesso" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Peças Produzidas</p>
-                    <p className="text-2xl font-bold text-purple-600" data-testid="text-pieces-insucesso">{stats.insucessoPecasProduzidas}</p>
-                    <p className="text-xs text-muted-foreground">Insucesso</p>
-                  </div>
+            <Card className="border-cyan-200 bg-cyan-50/50">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Check className="h-6 w-6 text-cyan-600 mx-auto mb-2" data-testid="icon-pieces-insucesso" />
+                  <p className="text-xs text-muted-foreground mb-1">Peças Produzidas</p>
+                  <p className="text-xl font-bold text-cyan-600" data-testid="text-pieces-insucesso">{stats.insucessoPecasProduzidas}</p>
+                  <p className="text-xs text-muted-foreground">Insucesso</p>
                 </div>
               </CardContent>
             </Card>
